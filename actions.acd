@@ -1,0 +1,2029 @@
+*        This module defines the actions to be taken when certain
+*        verb, verb/object, verb/verb or object/object word sequences
+*        are spoken.
+*
+ACTION   LIFT         {Deliberately non-synonymous with get - for grate and}
+         IFKEY GRATE  {for the flagstone, intercepted in AT DUNGEON}
+            IFNEAR GRATE
+               IFEQ GRATE, UNLOCKED
+                  QUIP ALREADY.OPEN, GRATE
+               FIN
+               QUIP GRATE.LOCKED, ARG1
+            FIN
+            PROCEED
+         FIN
+         CALL GET
+ACTION   GET
+         ANYOF DRINK, INVENTORY
+            SET STATUS, 1
+            CALL ARG2
+ACTION   GET
+         IFKEY ALL
+            DOALL HERE, PORTABLE
+         FIN
+         IFEQ CLOSURE, IN.REPOSITORY
+            AND
+         IFGT STATUS, 1
+            AND
+         BIT ARG2, PORTABLE
+            AND
+            NOT
+         BIT ARG2, SEEN
+            SET J, 0
+            IFAT NE.REPOSITORY
+               AND
+            BIT ARG2, SPECIAL1
+               SET J, 1
+            FIN
+            IFAT SW.REPOSITORY
+               AND
+            BIT ARG2, SPECIAL2
+               SET J, 1
+            FIN
+            IFEQ J, 1
+               APPORT ARG2, HERE
+               BIS ARG2, SEEN
+            FIN
+         FIN
+         CALL IS.IT.DARK?
+         IFEQ IV, IT.IS.DARK
+#             IFKEY OWL
+#                AND
+#             IFNEAR OWL
+#                QUIP NO.KILL.OWL
+#             FIN
+            CALL GROPE.FOR.IT   {have to grope around for it}
+         FIN
+         SET K, 0                 {Assume no defaulting}
+         IFEQ STATUS, 1
+            SET K, 1              {We may be defaulting!}
+         FIN
+         DEFAULT PORTABLE
+         ANYOF BIRD, CAGE, OIL, WATER, CHAIN, BEAR, CLAM, KNIFE
+#          ANYOF SWORD, SCEPTRE, KNIFE, ORB, STARSTONE, UNICORN
+            IFKEY BIRD
+               CALL GET.BIRD
+            ELSE
+               IFKEY CAGE
+                  CALL GET.CAGE
+               ELSE
+                  IFKEY OIL
+                     CALL GET.OIL
+                  ELSE
+                     IFKEY WATER
+                        CALL GET.WATER
+                     ELSE
+                        IFKEY CHAIN
+                           AND
+                        IFAT BEAR.ROOM
+                           AND
+                        IFHERE CHAIN
+                           AND
+                           NOT
+                        IFEQ CHAIN, UNLOCKED
+                           QUIP CHAIN.LOCKED
+                        FIN
+                        IFKEY BEAR
+                           CALL GET.BEAR
+                        ELSE
+#                            IFKEY SWORD
+#                               CALL GET.SWORD
+#                            ELSE
+#                               IFKEY SCEPTRE
+#                                  CALL GET.SCEPTRE
+#                               ELSE
+                                 IFKEY KNIFE
+                                    CALL GET.KNIFE
+                                 ELSE
+#                                     IFKEY ORB
+#                                        CALL GET.ORB
+#                                     ELSE
+#                                        IFKEY STARSTONE
+#                                           CALL GET.STARSTONE
+#                                        ELSE
+#                                           IFKEY UNICORN
+#                                              AND
+#                                           IFHERE UNICORN
+#                                              QUIP UNICORN.WONT.MOVE
+#                                           FIN
+#                                        FIN
+#                                     FIN
+                                 FIN
+#                               FIN
+#                            FIN
+                        FIN
+                     FIN
+                  FIN
+               FIN
+            FIN
+ACTION   GET        {Generalized last-case "get" routine}
+         IFEQ STATUS, 1
+            PROCEED
+         FIN
+         BIT ARG2, OBJECT
+         ELSE
+            PROCEED
+         FIN
+         IFHAVE ARG2
+            QUIP YOU.HAVE.IT, ARG2
+         FIN
+         IFNEAR ARG2
+         ELSE
+            QUIP I.DONT.SEE, ARG2
+         FIN
+#          IFKEY DUNG
+#             CALL LOOK
+#             QUIT
+#          FIN
+         BIT ARG2, PORTABLE
+         ELSE
+            QUIP BE.SERIOUS!
+         FIN
+         IFKEY RUG
+            AND
+         IFEQ RUG, UNROLLED
+            BIT HINTS, PICKING.UP.RUGS
+                SET IV, 0
+            ELSE
+               BIS HINTS, PICKING.UP.RUGS
+               SET IV, 1
+            FIN
+            QUIP RUG.TOO.LARGE, IV
+         FIN
+         IFLT  INVCT, STRENGTH
+            GET ARG2
+            SAY YOU.DO, ARG1
+            IFKEY DYNAMITE
+               AND
+            IFGT K, 0               {WARNING! K must not be used between}
+               SAY IT.IS, ROD       {the DEFAULT statement above and here}
+            ELSE                    {(the CALLs are OK - they don't return)}
+               SAY IT.IS, ARG2
+            FIN
+            IFKEY OYSTER
+               AND
+            IFEQ CLOSURE, IN.REPOSITORY
+               AND
+            IFEQ OYSTER, 0
+               SAY OYSTER.WRITING
+               SET OYSTER, 1
+            FIN
+            CALL PICKUP
+         ELSE
+            SAY ARMS.ARE.FULL
+            FLUSH
+         FIN
+         QUIT
+ACTION   DROP
+         DEFAULT INHAND
+         IFKEY ALL
+            DOALL INHAND
+         FIN
+         ANYOF BIRD, CAGE, BOTTLE, OIL, WATER, VASE, BEAR
+         ANYOF DRACHMA
+            IFKEY BIRD
+               CALL DROP.BIRD
+            ELSE
+               IFKEY CAGE
+                  CALL DROP.CAGE
+               ELSE
+                  IFKEY BOTTLE
+                     CALL DROP.BOTTLE
+                  ELSE
+                     IFKEY OIL
+                        OR
+                     IFKEY WATER
+                        CALL DROP.LIQUID
+                     ELSE
+                        IFKEY VASE
+                           CALL DROP.VASE
+                        ELSE
+#                            IFKEY VIAL
+#                               CALL DROP.VIAL
+#                            ELSE
+#                               IFKEY DJINN
+#                                  AND
+#                               IFNEAR DJINN
+#                                  APPORT DJINN, YLEM
+#                                  BIS DJINN, SPECIAL1
+#                                  CHOOSE CLOCK, 4, 12
+#                                  SET LASTCLOCK, CLOCK
+#                                  QUIP DJINN.ADVICE
+#                               FIN
+                              IFKEY BEAR
+                                 IFHAVE BEAR
+                                    DROP BEAR
+                                    SAY FREED.BEAR
+                                    QUIP BLANK
+                                 FIN
+#                               ELSE
+#                                  IFKEY STARSTONE
+#                                     CALL DROP.STARSTONE
+#                                  ELSE
+#                                     IFKEY DRACHMA
+#                                        CALL DROP.DRACHMA
+#                                     FIN
+#                                  FIN
+                              FIN
+#                            FIN
+                        FIN
+                     FIN
+                  FIN
+               FIN
+            FIN
+ACTION   DROP               {Generalized "drop" control}
+         IFEQ STATUS, 1
+            PROCEED
+         FIN
+         BIT ARG2, OBJECT
+         ELSE
+            PROCEED
+         FIN
+         IFHAVE ARG2
+            CALL CHECK.WEARING
+#             IFAT CELLAR
+#                AND
+#                NOT
+#             BIT ARG2, BIG
+#                OR
+#             IFAT LOW.ROOM
+#                OR
+#             IFAT SHAFT
+#                OR
+#             IFAT PHONEY.SHAFT
+#                OR
+#             BIT HERE, IN.SEWER
+#                APPORT ARG2, SEA.VIEW
+#                IFKEY FOOD
+#                   APPORT FOOD, LIMBO
+#                   IFNEAR RATS
+#                      SAY FOOD.DISAPPEARS
+#                      IFGT RATS, 1
+#                         SAY RATS.HUNGRY
+#                      FIN
+#                      SET RATS, 0
+#                      QUIT
+#                   FIN
+#                FIN
+#                SAY THE.IT, ARG2
+#                IFAT CELLAR
+#                   OR
+#                IFAT LOW.ROOM
+#                   IFAT CELLAR
+#                      LDA K, DOWN.THE.DSHAFT
+#                   ELSE
+#                      LDA K, DOWN.THE.SHAFT
+#                   FIN
+#                ELSE
+#                   LDA K, INTO.SEWAGE
+#                FIN
+#                BIT ARG2, PLURAL
+#                   VALUE K, 1
+#                ELSE
+#                   VALUE K, 0
+#                FIN
+#                QUIT
+#             FIN
+#             IFAT BEAMS
+#                APPORT ARG2, CHAPEL
+#                SAY THE.IT, ARG2
+#                BIT ARG2, PLURAL
+#                   VALUE DROP.TO.DARKNESS, 1
+#                ELSE
+#                   VALUE DROP.TO.DARKNESS, 0
+#                FIN
+#                QUIT
+#             FIN
+            DROP  ARG2
+#             IFKEY SPOON
+#                AND
+#             IFEQ SPOON, UNREAD
+#                BIS STATUS, DETAILDISPLAY
+#                SAY SPOON
+#                BIC STATUS, DETAILDISPLAY
+#                SET SPOON, EPNS.NOTED
+#             ELSE
+#                IFKEY TUSK
+#                   AND
+#                IFAT BUILDING
+#                   AND
+#                   NOT
+#                BIT TUSK, VALUED
+#                   SAY TUSK.QUIP, ARG2
+#                   BIS TUSK, VALUED
+#                ELSE
+#                   IFKEY FLASK
+#                      SAY YOU.DO, ARG1
+#                      SAY IT.IS..., FLASK
+#                      IFEQ FLASK, FULL.OF.OIL
+#                         SAY IT.POURS.OUT, OIL
+#                      ELSE
+#                         IFEQ FLASK, FULL.OF.WATER
+#                            SAY IT.POURS.OUT, WATER
+#                         ELSE
+#                            SAY BLANK
+#                         FIN
+#                      FIN
+#                      IFGT FLASK, EMPTIED
+#                         SET FLASK, EMPTIED
+#                      FIN
+#                   ELSE
+                     SAY YOU.DO, ARG1
+                     SAY IT.IS, ARG2
+#                   FIN
+#                FIN
+#             FIN
+         ELSE
+            SAY YOU.ARENT.CARRYING, ARG2
+         FIN
+         QUIT
+ACTION   WALK
+         IFEQ STATUS, 1
+            QUIP WHICH.WAY?, ARG1
+         FIN
+         IFINRANGE ARG1, FIRST.COMPASS.POINT, LAST.COMPASS.POINT
+            OR
+         IFINRANGE ARG2, FIRST.COMPASS.POINT, LAST.COMPASS.POINT
+            OR
+         IFINRANGE ARG2, FIRST.TRAVEL, LAST.TRAVEL
+            OR
+         IFKEY UP
+            OR
+         IFKEY DOWN
+            OR
+         IFKEY BACK
+            OR
+         IFKEY CAVE
+            OR
+         IFKEY OUT
+            OR
+         IFKEY IN
+            CALL ARG2
+         ELSE
+            BIT ARG2, PLACE
+               IFAT ARG2
+                  QUIP NEED.MORE.DETAIL
+               FIN
+               QUIP DONT.KNOW.THE.WAY
+            FIN
+            IFKEY PIRATE
+               OR
+            IFKEY DWARF
+               OR
+            IFKEY SHADOW
+               OR
+            IFKEY BEAR
+               IFNEAR ARG2
+                  QUIP NOT.GOING.ANYWHERE, ARG2
+               FIN
+               QUIP I.DONT.SEE, ARG2
+            FIN
+            QUIP PARDON?
+         FIN
+ACTION   DIG
+         QUIP NEED.SHOVEL
+ACTION   CAVE
+         IFAT VALLEY
+           OR
+         IFAT ROAD
+           OR
+         IFAT SLIT
+           OR
+         IFAT DEPRESSION
+           OR
+         IFAT BUILDING
+            QUIP TRY.FOLLOWING.STREAM
+         FIN
+         QUIP NEED.MORE.DETAIL
+ACTION   OIL
+         IFNEAR BOTTLE, FULL.OF.OIL
+            OR
+         IFNEAR OIL
+         ELSE
+            QUIP YOU.DONT.HAVE, OIL
+         FIN
+         IFGT STATUS, 1
+            IFIS ARG1, OIL
+               AND
+               NOT
+            IFNEAR ARG2
+               QUIP I.DONT.SEE, ARG2
+            ELSE
+               IFIS ARG2, OIL
+                  AND
+                  NOT
+               IFNEAR ARG1
+                  QUIP I.DONT.SEE, ARG1
+               FIN
+            FIN
+         FIN
+         IFKEY DOOR
+            CALL DISPOSE.OIL
+            IFEQ DOOR, RUSTY
+               SET DOOR, OILED
+               QUIP DOOR.NOW.OILED
+            FIN
+            SAY YOU.DO, OIL
+            QUIP IT.IS, DOOR
+         FIN
+         IFKEY PLANT
+            CALL DISPOSE.OIL
+            QUIP YOU.OIL.THE.PLANT
+         FIN
+         IFKEY AXE
+            QUIP WHATEVER.FOR?
+         FIN
+ACTION   WATER PLANT
+         IFNEAR PLANT
+            IFHAVE BOTTLE, FULL.OF.WATER
+               SET BOTTLE, EMPTIED
+               CALL WATER.BEANSTALK
+            ELSE
+               SAY YOU.DONT.HAVE, ARG1
+            FIN
+         ELSE
+            SAY I.DONT.SEE, ARG2
+         FIN
+         QUIT
+ACTION   WATER DOOR
+         IFNEAR DOOR
+               IFHAVE BOTTLE, FULL.OF.WATER
+                  SET BOTTLE, EMPTIED
+               FIN
+               SET DOOR, RUSTY
+               QUIP HINGES..RUST
+            QUIP YOU.DONT.HAVE, WATER
+         FIN
+         QUIP I.DONT.SEE, DOOR
+ACTION   THROW
+         ANYOF AXE
+            CALL IS.IT.DARK?
+            IFEQ IV, IT.IS.NOT.DARK
+               CALL WEAPONRY
+            FIN
+ACTION   THROW WATER
+         IFHAVE BOTTLE, FULL.OF.WATER
+            CALL DROP.LIQUID
+            QUIT
+         FIN
+         QUIP YOU.DONT.HAVE, ARG2
+ACTION   THROW OIL
+         IFHAVE BOTTLE, FULL.OF.OIL
+            CALL DROP.LIQUID
+            QUIT
+         FIN
+         QUIP YOU.DONT.HAVE, ARG2
+ACTION   THROW FOOD
+         HAVE FOOD
+            IFNEAR TROLL
+               QUIP NO.FEED.TROLL
+            FIN
+            IFNEAR DWARF
+               DROP FOOD
+               BIS DWARF, SPECIAL2 {enrage the dwarf}
+               QUIP FED.UP.DWARF
+            FIN
+            IFNEAR BEAR
+               APPORT FOOD, LIMBO
+               SET BEAR, CHAINED.GENTLE
+               IFEQ AXE, BY.BEAR
+                  SET AXE, AN.ZICH
+               FIN
+               QUIP BEAR.EATS
+            FIN
+ACTION   THROW              {Generalized "throw" control}
+         IFEQ STATUS, 2
+            BIT ARG2, OBJECT {throwing objects}
+               IFHAVE ARG2  {that you happen to be carrying}
+                  AND         {in a place that things can be}
+               BIT HERE, TRANSIT {thrown from, to someplace else}
+                  CALL CHECK.WEARING
+                  CALL UPCHUCK     {find the destination and print}
+               FIN               {the message}
+            FIN
+         FIN
+         CALL DROP
+ACTION   WAVE
+         BIS SHADOW, SPECIAL1
+         IFGT STATUS, 1
+            BIT ARG2, OBJECT
+            ELSE
+               PROCEED
+            FIN
+            BIT ARG2, PORTABLE
+            ELSE
+               QUIP BE.SERIOUS!
+            FIN
+            IFHAVE ARG2
+            ELSE
+               QUIP YOU.ARENT.CARRYING, ARG2
+            FIN
+         ELSE
+            SAY YOU.WAVE
+            IFNEAR SHADOW
+               QUIP BLANK
+            FIN
+            QUIP NO.ONE.WAVES.BACK
+         FIN
+         IFKEY ROD
+            IFNEAR FISSURE
+               IFLT CLOSURE, EXITS.BARRED
+                  ADD FISSURE, 1
+                  IFEQ FISSURE, 2
+                     SET FISSURE, 0
+                     BIS FISSURE, FEATURE
+                     APPORT BRIDGE, LIMBO
+                  ELSE
+                     BIC FISSURE, FEATURE
+                  FIN
+                  SAY CRYSTAL.BRIDGE, FISSURE
+               ELSE
+                  SAY NOTHING
+               FIN
+            ELSE
+               IFNEAR QUICKSAND
+                  SAY NOTHING.OBVIOUS
+                  SET QUICKSAND, 1    {harden the quicksand for a while}
+               ELSE
+                  IFNEAR GORGE
+                     AND
+                  IFLT CLOSURE, EXITS.BARRED
+                     ADD GORGE, 1
+                     SAY GORGE
+                     ADD GORGE, 1
+                     IFEQ GORGE, 4
+                        SET GORGE, 0
+                        BIS GORGE, FEATURE
+                        APPORT BRIDGE, LIMBO
+                     ELSE
+                        BIC GORGE, FEATURE
+                     FIN
+                  ELSE
+                     SAY NOTHING
+                  FIN
+               FIN
+            FIN
+         ELSE
+            IFKEY AXE
+               CALL IS.IT.DARK?
+               IFEQ IV, IT.IS.DARK
+                  QUIP YOU.HIT.NOTHING, ARG2
+               FIN
+               CALL WEAPONRY
+            ELSE
+               SAY NOTHING
+            FIN
+         FIN
+         QUIT
+ACTION   NORTH
+         CALL NO.MOVE.POSSIBLE
+ACTION   SOUTH
+         CALL NO.MOVE.POSSIBLE
+ACTION   UP
+         CALL NO.MOVE.POSSIBLE
+ACTION   DOWN
+         CALL NO.MOVE.POSSIBLE
+ACTION   EAST
+         CALL NO.MOVE.POSSIBLE
+ACTION   WEST
+         CALL NO.MOVE.POSSIBLE
+ACTION   NORTHEAST
+         CALL NO.MOVE.POSSIBLE
+ACTION   NORTHWEST
+         CALL NO.MOVE.POSSIBLE
+ACTION   SOUTHEAST
+         CALL NO.MOVE.POSSIBLE
+ACTION   SOUTHWEST
+         CALL NO.MOVE.POSSIBLE
+ACTION   INVENTORY
+         SET J, 0
+         ITOBJ PTR.OBJ
+            IFHAVE PTR.OBJ
+               IFEQ J, 0
+                  SAY YOU.CURRENTLY.HAVE
+                  SET J, 1
+               FIN
+               SAY PTR.OBJ
+            FIN
+         EOI
+         IFEQ J, 0
+            SAY ARMS.ARE.EMPTY
+         FIN
+         QUIT
+ACTION   LOOK                {Can't look in the dark!}
+         CALL IS.IT.DARK?
+         IFEQ IV, IT.IS.DARK
+            QUIP NO.LIGHT.HERE
+         FIN
+         IFEQ STATUS, 1
+            SET J, 0
+            BIT STATUS, FASTMODE
+            ELSE
+               BIS STATUS, FULLDISPLAY
+               SET J, 1
+            FIN
+            CALL DESCRIBE.HERE
+            BIC STATUS, FULLDISPLAY
+            BIS HERE, BEEN.HERE
+            QUIT
+         FIN
+         ANYOF MIST, CURTAINS, DRAWINGS, VOCABULARY    {Special cases}
+            CALL ARG2
+ACTION   LOOK
+         ANYOF NOTICE, INSCRIPTION, MAGAZINES
+         CALL READ
+         QUIT
+ACTION   LOOK OIL
+         IFNEAR BOTTLE, FULL.OF.OIL
+            OR
+         IFNEAR OIL
+            QUIP LOOKS.GREASY
+         FIN
+#          IFNEAR VIAL
+#             QUIP THIS.IS.NOT.OIL
+#          FIN
+ACTION   LOOK PLANT
+         IFNEAR PLANT2
+            AND
+         IFGT PLANT2, STUNTED
+            OR
+         IFNEAR PLANT
+            QUIP ITS.A.BEANSTALK, PLANT
+         FIN
+         QUIP I.DONT.SEE, ARG2
+ACTION   LOOK WATER
+         IFNEAR BOTTLE, FULL.OF.WATER
+            OR
+         BIT HERE, H20.HERE
+            QUIP WATER.IS.FOR.DRINKING
+         FIN
+ACTION   LOOK
+         BIT ARG2, OBJECT
+            IFNEAR ARG2
+            ELSE
+               QUIP I.DONT.SEE, ARG2
+            FIN
+         ELSE
+            BIT ARG2, PLACE
+               IFIS ARG2, SLIT             {Need a more general mechanism!}
+                  IFAT ARG2
+                  ELSE
+                     QUIP YOU.ARE.NOT.THERE
+                  FIN
+               ELSE
+                  QUIP NO.ENLIGHTENMENT
+               FIN
+            FIN
+         FIN
+         ANYOF BRIDGE   {btb - removed ORB in the 660 backport - this could be cleaner}
+            IFKEY BRIDGE
+               CALL LOOK.BRIDGE
+#             ELSE
+#                IFKEY ORB
+#                   CALL SCRY
+#                FIN
+            FIN
+            QUIT
+# ACTION   LOOK FLASK
+#          IFLT FLASK, EMPTIED
+#             QUIP SEALED.FLASK.INFO
+#          FIN
+ACTION   LOOK OYSTER
+         IFEQ CLOSURE, IN.REPOSITORY
+            AND
+         IFEQ OYSTER, 0
+            AND
+         IFHAVE OYSTER
+            SET OYSTER, 1
+            QUIP OYSTER.WRITING
+         FIN
+ACTION   LOOK
+#          IFKEY CROWN
+#             AND
+#          IFGT CROWN, DORMANT
+#             QUIP REMOVE.IT.FIRST, CROWN
+#          FIN
+         BIT ARG2, OBJECT
+            OR
+         BIT ARG2, PLACE
+            BIS STATUS, DETAILDISPLAY
+            SAY ARG2
+            BIC STATUS, DETAILDISPLAY
+#             IFKEY SPOON
+#                AND
+#             IFEQ SPOON, UNREAD
+#                SET SPOON, EPNS.NOTED
+#             FIN
+            QUIT
+         FIN
+         BIT ARG2, VERB
+            IFINRANGE ARG2, FIRST.TRAVEL, LAST.TRAVEL
+               QUIP NO.ENLIGHTENMENT
+            FIN
+            IFINRANGE ARG2, FIRST.PSEUDO, LAST.PSEUDO
+               IFKEY WALLS
+                  BIT HERE, NOT.IN.CAVE
+                     QUIP HAH!
+                  FIN
+                  QUIP NOTHING.SPECIAL, ARG2
+               FIN
+               IFKEY ROCKS
+                  QUIP NO.ENLIGHTENMENT
+               FIN
+               QUIP I.DONT.SEE, ARG2
+            FIN
+            QUIP HAH!
+         FIN
+ACTION   LIGHT
+         IFKEY OFF
+            CALL EXTINGUISH
+         FIN
+         IFKEY LAMP
+            OR
+         IFKEY ON
+            OR
+         IFEQ STATUS, 1
+            IFNEAR LAMP
+               IFEQ LAMP, SWITCHED.ON
+                  QUIP LAMP.ALREADY, SWITCHED.ON
+               FIN
+               IFLT LAMPLIFE, 40
+                  IFNEAR BATTERIES, FRESH
+                     SAY NEW.BATTERIES
+                     SET BATTERIES, WORNOUT
+                     ADD LAMPLIFE, 400
+                  FIN
+               FIN
+               IFGT LAMPLIFE, 0
+                  SET LAMP, SWITCHED.ON
+                  SAY LAMP.NOW, SWITCHED.ON
+                  BIT HERE, LIT
+                  ELSE
+                     SET STATUS, 1
+                     CALL LOOK
+                  FIN
+               ELSE
+                  SAY LAMP.IS.DEAD
+               FIN
+            ELSE
+               IFKEY LAMP
+                  QUIP I.DONT.SEE, ARG2
+               FIN
+               QUIP NO.LIGHT.HERE
+            FIN
+            QUIT
+         FIN
+ACTION   EXTINGUISH
+         IFKEY LAMP
+            OR
+         IFKEY OFF
+            OR
+         IFEQ STATUS, 1
+            IFNEAR LAMP
+               IFEQ LAMP, SWITCHED.OFF      {Was it off?}
+                  QUIP LAMP.ALREADY, SWITCHED.OFF
+               FIN
+               SET LAMP, SWITCHED.OFF
+               SAY LAMP.NOW, SWITCHED.OFF
+               CALL IS.IT.DARK?
+               IFEQ IV, IT.IS.DARK         {it is?... tell him so}
+                  SAY IT.IS.NOW.DARK
+               FIN
+            ELSE
+               IFKEY LAMP
+                  QUIP I.DONT.SEE, ARG2
+               FIN
+               PROCEED     {the standard bailout will say catch it}
+            FIN
+         ELSE
+            QUIP DUNNO.HOW
+         FIN
+         QUIT
+ACTION   UNLOCK
+         DEFAULT OPENABLE
+         IFKEY GRATE
+            AND
+         IFEQ GRATE, LOCKED
+            AND
+            NOT
+         IFHAVE KEYS
+            QUIP NEED.KEYS
+         FIN
+         CALL OPEN
+ACTION   OPEN                  {General opening routine}
+         IFKEY SESAME
+            QUIP OLDFASHIONED.MAGIC
+         FIN
+         DEFAULT OPENABLE
+         IFEQ STATUS, 2
+            AND
+            NOT
+         IFNEAR ARG2
+            QUIP I.DONT.SEE, ARG2
+         FIN
+         ANYOF BOTTLE, CHEST, CAGE, CLAM, OYSTER, KEYS, GATE
+            IFKEY BOTTLE
+               QUIP BOTTLE.NO.STOPPER
+            FIN
+            IFKEY CHEST
+               QUIP CHEST.LOCKED
+            FIN
+            IFKEY CAGE
+               QUIP OK
+            FIN
+            IFKEY CLAM
+               OR
+            IFKEY OYSTER
+               CALL OPEN.BIVALVE
+            FIN
+            IFKEY KEYS
+               QUIP NO.UNLOCK.KEYS
+            FIN
+            IFKEY CURTAINS
+               IFAT SOFT
+                  QUIP CURTAINS.FIXED
+               FIN
+               QUIP NO.OPEN.CURTAINS
+            FIN
+            IFKEY GATE
+               QUIP NO.OPEN.GATE
+            FIN
+ACTION   OPEN
+         ANYOF GRATE, CHAIN
+            EVAL IV, ARG2
+            IFEQ IV, UNLOCKED
+               QUIP ALREADY.OPEN, ARG2
+            FIN
+            IFHAVE KEYS
+            ELSE
+               IFKEY GRATE
+                   QUIP GRATE.LOCKED, ARG1
+               FIN
+               QUIP NEED.KEYS
+            FIN
+ACTION   OPEN GRATE
+         IFGT CLOSURE, CLOSING.SOON
+            OR
+         BIT ADMIN, NOMAGIC
+            SAY GRATE.STUCK
+            IFGT CLOSURE, CLOSING.SOON
+               BIS ADMIN, PANICKED
+               BIT GRATE, SPECIAL1
+               ELSE
+                  BIS GRATE, SPECIAL1
+                  QUIP EXIT.CLOSED
+               FIN
+            FIN
+            QUIT
+         FIN
+         SET GRATE, UNLOCKED
+         BIC DEPRESSION, HINTABLE
+         SET IV, UNLOCKED
+         IFKEY OPEN
+            ADD IV, 1
+         FIN
+         QUIP  GRATE.NOW, IV
+ACTION   OPEN  CHAIN
+         IFEQ BEAR, CHAINED.FEROCIOUS
+            QUIP CANT.GET.PAST.BEAR
+         FIN
+         SET CHAIN, UNLOCKED
+         SET BEAR, UNCHAINED
+         QUIP CHAIN.NOW.UNLOCKED
+ACTION   OPEN DOOR
+         NEAR DOOR
+            IFEQ DOOR, RUSTY
+               QUIP DOOR.NEEDS.OIL
+            FIN
+            QUIP OK
+ACTION   CLOSE
+         IFKEY CAVE
+            AND
+         BIT ADMIN, OLORIN   {only wizards can force cave closure}
+            CALL CLOSE.THE.CAVE
+         FIN
+         DEFAULT OPENABLE
+         IFEQ STATUS, 2
+            AND
+            NOT
+         IFNEAR ARG2
+            QUIP I.DONT.SEE, ARG2
+         FIN
+         ANYOF BOTTLE, DOOR, CAGE
+            IFKEY BOTTLE
+               QUIP BOTTLE.NO.STOPPER
+            FIN
+            IFKEY DOOR
+               QUIP NO.LOCK
+            FIN
+            IFKEY CAGE
+               QUIP OK   {Pretend we did something}
+            FIN
+ACTION   CLOSE
+         ANYOF GRATE, CHAIN
+            EVAL IV, ARG2
+               NOT                    {Safe and chain have more than one}
+            IFEQ IV, UNLOCKED         {"locked" states!}
+               QUIP ALREADY.SHUT, ARG2
+            FIN
+            DEPOSIT ARG2, LOCKED
+            IFKEY GRATE
+               QUIP GRATE.NOW, LOCKED
+            FIN
+            IFAT BEAR.ROOM
+               IFHAVE CHAIN
+                  DROP CHAIN
+               FIN
+               IFNEAR BEAR
+                  DROP BEAR
+                  SET BEAR, CHAINED.GENTLE
+                  QUIP BEAR.CHAINED
+               FIN
+               SET CHAIN, LOCKED.EMPTY
+               QUIP CHAIN.NOW.LOCKED
+            FIN
+            QUIP NO.LOCK.CHAIN
+ACTION   HELP
+         IFINRANGE HERE, MAZEA.42, MAZEA.BY.PIT
+            OR
+         IFINRANGE HERE, MAZED.107, MAZED.140
+            AND
+            NOT
+         BIT HERE, HINTABLE
+            CALL GET.SCORE
+            IFGT SCOREX, 99
+               QUIP MAZE.HELP.NO.OFFER
+            FIN
+            VALUE MAZE.HELP.OFFER, HINT.COST
+            QUERY WANT.OUT?
+               ADD PENALTIES, HINT.COST
+               ITOBJ PTR.OBJ
+                  IFHAVE PTR.OBJ, VALUED
+                     DROP PTR.OBJ
+                  FIN
+               EOI
+               SAY FOOF
+               IFINRANGE HERE, MAZEA.42, MAZEA.BY.PIT
+                  MOVE WEST.END.OF.MISTS
+               FIN
+               IFINRANGE HERE, MAZED.107, MAZED.140
+                  MOVE LONG.HALL.WEST
+               FIN
+            FIN
+            QUIT
+         FIN
+         IFEQ HINT.TIME, 0
+            SET HINT.TIME, 1
+         FIN
+         CALL HINT.LOGIC     {try to locate hint for here}
+         IFGT HINT.TIME, 0    {if no hint for this place}
+            IFNEAR DWARF
+               OR
+            IFNEAR DRAGON
+               OR
+            IFNEAR TROLL
+               OR
+            IFNEAR INSCRIPTION
+               SAY CANT.HELP.YOU
+            ELSE
+               BIT HINTS, HELPED.HIM
+                  SAY NO.MORE.HELP
+               ELSE
+                  BIS HINTS, HELPED.HIM
+                  LDA J, HELP.DATA
+                  LDA K, HELP.DATA.END
+                  CALL KEEP.TALKING
+               FIN
+            FIN
+         FIN
+         QUIT
+ACTION   INFO
+         LDA J, INFO.FIRST
+         LDA K, INFO.LAST
+         CALL KEEP.TALKING
+         QUIT
+ACTION   QUIT
+         QUERY WANT.TO.QUIT?
+            SET QUITTING, 1
+            CALL FINIS
+         FIN
+         QUIP OK
+ACTION   NORMAL
+         BIS STATUS, QUICKIE
+         BIC STATUS, FASTMODE
+         LDA OK, OK!
+         QUIP BRIEF.OK
+ACTION   WIZARD
+         BIT ADMIN, OLORIN
+            BIC ADMIN, OLORIN
+            QUIP OK
+         FIN
+         QUERY R.U.A.WIZARD?    { Oh no you are not! }
+            INPUT PROVE.IT
+            ADD PENALTIES, 10
+            QUIP OH.POOH
+         FIN
+         QUIP OK
+ACTION   FLY
+         BIT ADMIN, OLORIN
+            IFEQ STATUS, 1
+               BIS STATUS, PLS.CLARIFY
+               QUIP WHERE?, ARG1
+            FIN
+            BIT ARG2, PLACE
+               SMOVE ARG2, FOOF
+            FIN
+            QUIP HAH!
+         FIN
+         IFEQ STATUS, 1
+            QUIP ONLY.WIZARDS
+         FIN
+         IFNEAR ARG2
+            IFKEY RUG
+               QUIP RUG.NOT.FOR.FLYING
+            FIN
+            QUIP HAH!
+         FIN
+ACTION   HIT
+         IFEQ STATUS, 2
+            BIT ARG2, MORTAL
+               CALL KILL
+            ELSE
+               IFKEY MIRROR
+                  CALL BREAK
+               FIN
+            FIN
+         FIN
+ACTION   KILL
+         CALL IS.IT.DARK?
+         IFEQ IV, IT.IS.DARK            {if it is...}
+            QUIP TOO.DARK.TO.FIGHT
+         FIN
+         IFKEY DWARF
+            AND
+         IFEQ CLOSURE, IN.REPOSITORY
+            AND
+         IFNEAR DWARF
+            SAY OTHER.DWARVES.WAKE
+            CALL CORONER
+         FIN
+         IFKEY MACHINE
+            CALL KICK
+         FIN
+         DEFAULT MORTAL      {find default enemy in one exists}
+         IFEQ STATUS, 1
+            IFEQ ARG2, BADWORD
+               QUIP PACIFIST
+            FIN
+            PROCEED
+         FIN
+         ANYOF TROLL, DWARF, DRAGON, SNAKE, BIRD, BEAR, OYSTER, CLAM
+         NEAR   ARG2
+            IFKEY TROLL
+               QUIP TROLL.DATA
+            FIN
+            IFKEY DWARF
+               CALL KILL.DWARF
+            ELSE
+               IFKEY DRAGON
+                  CALL KILL.DRAGON
+               ELSE
+                  IFKEY SNAKE
+                     QUIP CANT.KILL.SNAKE
+                  FIN
+                  IFKEY BEAR
+                     QUIP NO.KILL.BEAR, BEAR
+                  FIN
+                  IFKEY CLAM
+                     OR
+                  IFKEY OYSTER
+                     QUIP KILL.BIVALVE
+                  FIN
+                  IFKEY BIRD
+                     CALL KILL.BIRD
+                  FIN
+               FIN
+            FIN
+            QUIT
+ACTION   TERSE
+         BIC STATUS, QUICKIE
+         BIS STATUS, FASTMODE
+         SAY OK
+         LDA OK, SOK!
+         QUIT
+ACTION   VERBOSE
+         BIC STATUS, QUICKIE
+         BIC STATUS, FASTMODE
+         LDA OK, OK!
+         SAY OK
+         CALL IS.IT.DARK?
+         IFEQ IV, IT.IS.DARK
+         ELSE
+            SAY BLANK
+            BIS STATUS, FULLDISPLAY
+            CALL DESCRIBE.HERE
+            BIC STATUS, FULLDISPLAY
+         FIN
+         QUIT
+ACTION   FEED
+         ANYOF BEAR, TROLL, BIRD, SNAKE, DWARF, DRAGON
+            IFNEAR ARG2
+               IFKEY BEAR
+                  IFNEAR FOOD
+                     SET BEAR, CHAINED.GENTLE
+                     IFHAVE FOOD
+                     FIN
+                     APPORT FOOD, LIMBO
+                     IFEQ AXE, BY.BEAR
+                        SET AXE, AN.ZICH
+                     FIN
+                     QUIP BEAR.EATS
+                  FIN
+                  QUIP IT.WONT.EAT
+               FIN
+               IFKEY TROLL
+                  QUIP NO.FEED.TROLL
+               FIN
+               IFKEY SNAKE
+                  IFHAVE BIRD
+                     CALL ZAP.BIRD
+                     QUIP SNAKE.EATS.BIRD
+                  FIN
+                  QUIP IT.WONT.EAT
+               FIN
+               IFKEY DWARF
+                  IFGT CLOSURE, CLOSING.SOON
+                     QUIP HAH!
+                  FIN
+                  BIS DWARF, SPECIAL2 {makes him mad}
+                  QUIP FED.UP.DWARF
+               FIN
+               IFKEY BIRD
+                  QUIP BIRD.NOT.HUNGRY
+               FIN
+               IFKEY DRAGON
+                  IFEQ DRAGON, ON.RUG
+                     QUIP IT.WONT.EAT
+                  FIN
+                  QUIP IT.IS.DEAD
+               FIN
+            FIN
+            QUIP I.DONT.SEE, ARG2
+ACTION   FEED
+         IFEQ STATUS, 1
+         ELSE
+            QUIP HAH!
+         FIN
+ACTION   SCORE
+         SET QUITTING, 1
+         CALL GET.SCORE
+         VALUE SHOULD.YOU.QUIT, SCOREX
+         VALUE MAXIMAL.SCORE, MAXSCORE
+         VALUE MOVE.COUNT, TURNS
+         QUIT
+ACTION   JUMP
+         QUIP NOWHERE.TO.JUMP
+ACTION   IN
+         QUIP IN.FROM.OUT
+ACTION   OUT
+         QUIP IN.FROM.OUT
+ACTION   SESAME
+         QUIP OLDFASHIONED.MAGIC
+ACTION   FEE
+         IFGT CLOSURE, CLOSING.SOON
+            QUIP NOTHING
+         FIN
+         ANYOF FIE, FOE, FOO, FUM
+            SET FOOBAR, 0
+            QUIP ONE.AT.A.TIME
+ACTION   FEE
+         SET FOOBAR, 1
+         QUIP OK
+ACTION   FIE
+         IFEQ FOOBAR, 0
+            SET FOOBAR, 2
+            QUIP OK
+         FIN
+         CALL FOO.TO.YOU.TOO
+         QUIT
+ACTION   FOE
+         IFEQ FOOBAR, 1
+            SET FOOBAR, 3
+            QUIP OK
+         FIN
+         CALL FOO.TO.YOU.TOO
+         QUIT
+ACTION   FOO
+         IFEQ STATUS, 2
+            AND
+            NOT
+         IFKEY SAY
+            QUIP WHAT?
+         FIN
+         IFEQ FOOBAR, 2
+            IFLOC NEST, GIANT.ROOM
+               OR
+            BIT NEST, SPECIAL2   {threw 'em into the chasm}
+               SAY NOTHING
+               IFLOC NEST, GIANT.ROOM
+                  SAY BIT.POINTLESS
+               FIN
+            ELSE
+               IFNEAR NEST
+                  SET NEST, 1
+               ELSE
+                  IFAT GIANT.ROOM
+                     SET NEST, 0
+                  ELSE
+                     SET NEST, 2
+                  FIN
+               FIN
+               IFHAVE NEST
+                  DROP NEST
+               FIN
+               SAY NEST
+               SET NEST, 0
+               BIT NEST, SPECIAL1  {if the eggs were given in toll}
+                  BIC NEST, SPECIAL1
+                  BIS TROLL, SPECIAL1    {can't be fooled twice}
+                  IFEQ TROLL, BOUGHT.OFF  {bought off, not crossed}
+                     OR
+                  IFEQ TROLL, WILL.BE.BACK   {bought off, crossed}
+                     IFNEAR TROLL2         {at the chasm with a good bridge}
+                        SAY FUNNY.NOT.CLEVER
+                     FIN
+                     SET TROLL, WANTS.TREASURE {normal troll mode}
+                     APPORT TROLL, SW.OF.CHASM   {fetch him back}
+                     APPORT TROLL2, LIMBO      {discard fake troll}
+                  FIN
+               FIN
+               APPORT NEST, GIANT.ROOM
+            FIN
+            SET FOOBAR, 0
+         ELSE
+            CALL FOO.TO.YOU.TOO
+         FIN
+         QUIT
+ACTION   FUM
+         QUIP ABSOLUTELY.NOTHING
+ACTION   XYZZY
+         QUIP NOTHING
+ACTION   PLUGH
+         QUIP NOTHING
+ACTION   SEARCH
+         QUIP CANT.SEARCH
+ACTION   FIND  CAVE
+         BIT HERE, NOT.IN.CAVE
+            AND
+            NOT
+         BIT IN.CAVE, BEEN.HERE
+            QUIP TRY.FOLLOWING.STREAM
+         FIN
+         QUIP NEED.MORE.DETAIL
+ACTION   FIND
+         IFGT STATUS, 1
+            BIT ARG2, OBJECT
+               BIT ADMIN, OLORIN
+                  IFHAVE ARG2
+                     QUIP YOU.HAVE.IT, ARG2
+                  FIN
+                  LOCATE PTR.PLACE, ARG2
+                  MOVE PTR.PLACE
+               FIN
+               IFNEAR ARG2
+                  IFHAVE ARG2
+                     OR
+                  IFKEY SHADOW
+                     QUIP IT.IS.HERE.NOW
+                  FIN
+                  QUIP HERESOMEWHERE
+               FIN
+               QUIP FIND.IT.YOURSELF
+            FIN
+            BIT ARG2, PLACE
+               IFAT ARG2
+                  QUIP YOU.ARE.THERE
+               FIN
+               QUIP FIND.IT.YOURSELF
+            FIN
+            QUIP WHAT?
+         FIN
+ACTION   SWIM
+         QUIP DUNNO.HOW
+ACTION   BREAK VASE
+         NEAR  VASE
+            APPORT VASE, YLEM
+            APPORT SHARDS, HERE
+            QUIP THROW.VASE
+ACTION   BREAK MIRROR
+         NEAR  MIRROR
+            IFEQ CLOSURE, IN.REPOSITORY
+               SAY BREAK.MIRROR
+               CALL CORONER
+            FIN
+            QUIP OUT.OF.REACH
+ACTION   FIX VASE
+         NEAR POTTERY
+            QUIP NO.CAN.FIX
+ACTION   FILL VASE
+         IFNEAR VASE
+            BIT HERE, H20.HERE
+               OR
+            IFAT EAST.PIT
+               IFHAVE VASE
+                  SUB INVCT, 1
+               FIN
+               APPORT VASE, YLEM
+               APPORT SHARDS, HERE
+               QUIP VASE.SHATTERS
+            FIN
+            QUIP NO.VASE.FILLER
+         FIN
+ACTION   FILL BOTTLE
+         IFHAVE BOTTLE
+            IFEQ BOTTLE, EMPTIED
+               BIT HERE, H20.HERE
+                  SET BOTTLE, FULL.OF.WATER
+                  QUIP BOTTLE.NOW.FULL, WATER
+               FIN
+               IFAT EAST.PIT
+                  SET BOTTLE, FULL.OF.OIL
+                  QUIP BOTTLE.NOW.FULL, OIL
+               FIN
+               QUIP NOTHING.TO.FILL, BOTTLE
+            FIN
+            QUIP BOTTLE.ALREADY.FULL
+         FIN
+         QUIP YOU.DONT.HAVE, ARG2
+ACTION   FILL
+         IFGT STATUS, 1
+            AND
+         IFNEAR ARG2
+            QUIP CANT.FILL.THAT
+         FIN
+ACTION   EMPTY
+         ANYOF BOTTLE
+            IFHAVE ARG2
+            ELSE
+               QUIP YOU.DONT.HAVE, ARG2
+            FIN
+ACTION   EMPTY BOTTLE
+         IFNEAR BOTTLE, FULL.OF.OIL
+            OR
+         IFNEAR BOTTLE, FULL.OF.WATER
+            LDA ARG2, WATER
+            IFNEAR BOTTLE, FULL.OF.OIL
+               LDA ARG2, OIL
+            FIN
+            CALL POUR
+         ELSE
+            SAY IS.EMPTY
+         FIN
+         QUIT
+ACTION   EMPTY
+         IFEQ STATUS, 2
+            QUIP HAH!
+         FIN
+ACTION   POUR                       {ACTION POUR WATER does not work, }
+         IFIS ARG2, WATER           {since we want to process EMPTY via}
+            IFNEAR BOTTLE, FULL.OF.WATER       {a call to POUR}
+               SET BOTTLE, EMPTIED  {This is also why the IFIS ARG2 is}
+               IFNEAR PLANT         {used rather than IFKEY.}
+                  CALL WATER.BEANSTALK
+               ELSE
+                  IFNEAR DOOR
+                     SAY HINGES..RUST
+                     SET DOOR, RUSTY
+                  ELSE
+                     SAY POUR.LIQUID, WATER
+                  FIN
+                  BIS HERE, DAMP   {dampen the ground}
+               FIN
+            ELSE
+                  SAY YOU.DONT.HAVE, WATER
+            FIN
+            QUIT
+         FIN
+         IFIS ARG2, OIL
+            IFNEAR BOTTLE, FULL.OF.OIL
+            ELSE
+               QUIP YOU.DONT.HAVE, OIL
+            FIN
+            IFNEAR BOTTLE, FULL.OF.OIL
+               SET BOTTLE, EMPTIED
+               SET J, 1
+            FIN
+            IFNEAR PLANT
+               SAY YOU.OIL.THE.PLANT
+            ELSE
+               IFNEAR DOOR
+                  SAY DOOR.NOW.OILED
+                  SET DOOR, OILED
+               ELSE
+                  IFEQ J, 1
+                     SAY POUR.LIQUID, WATER
+                     BIS HERE, DAMP   {dampen the ground}
+                  FIN
+               FIN
+            FIN
+            QUIT
+         FIN
+         IFGT STATUS, 1
+            QUIP CANT.POUR
+         FIN
+ACTION   PLACATE
+         ANYOF DWARF, SNAKE, BIRD, DRAGON, TROLL, BEAR, PIRATE
+         NEAR  ARG2
+            QUIP I.AM.GAME
+ACTION   EAT
+         IFNEAR FOOD
+            IFKEY FOOD
+               OR
+            IFEQ STATUS, 1
+               APPORT FOOD, LIMBO
+               QUIP URRP
+            FIN
+         FIN
+         IFEQ STATUS,1
+            QUIP NO.FOOD
+         FIN
+         ANYOF DWARF, DRAGON, BIRD, SNAKE, BEAR, TROLL, PLANT
+            QUIP BLEAH
+ACTION   EAT
+         BIT ARG2, OBJECT         {Already quitted for STATUS 1}
+            IFNEAR ARG2
+               QUIP REPULSIVE
+            FIN
+         FIN
+ACTION   RUB LAMP
+         NEAR LAMP
+            QUIP YOU.RUB.LAMP, ARG2
+ACTION   RUB
+         IFGT STATUS, 1
+            BIT ARG2, OBJECT
+               IFNEAR ARG2
+                  BIT ARG2, MORTAL
+                     AND
+                     NOT
+                  IFKEY CLAM
+                     AND
+                     NOT
+                  IFKEY OYSTER
+                     QUIP HAH!
+                  FIN
+                  QUIP PECULIAR
+               FIN
+            FIN
+         FIN
+ACTION   BACK
+         BIT HERE, NO.BACK
+            OR
+         BIT THERE, NO.BACK
+            OR
+         IFEQ THERE, 0
+            QUIP CANT.GO.BACK
+         FIN
+         MOVE THERE
+ACTION   MIST
+         IFAT MISTS
+            OR
+         IFAT PIT
+            OR
+         IFAT EAST.OF.FISSURE
+            OR
+         IFAT EAST.WINDOW
+            OR
+         IFAT WEST.WINDOW
+            OR
+         IFAT MISTY
+            OR
+         IFAT MIRROR.CANYON
+            OR
+         IFAT RESERVOIR
+            OR
+         IFAT SW.OF.CHASM
+            OR
+         IFNEAR CHASM
+            QUIP THIS.IS.MIST
+         FIN
+         QUIP I.DONT.SEE, MIST
+ACTION   CURTAINS
+         IFAT SOFT
+            QUIP COMFORT
+         FIN
+         QUIP I.DONT.SEE, CURTAINS
+ACTION   DRAWINGS
+         IFNEAR DRAWINGS
+            QUIP ORIENTAL.DRAWING
+         FIN
+         QUIP I.DONT.SEE, DRAWINGS
+ACTION   SAY
+         ANYOF PLUGH, XYZZY
+         ANYOF SESAME
+         ANYOF FEE, FIE, FOE, FOO, FUM
+            CALL ARG2
+            QUIT
+ACTION   SAY
+         IFEQ STATUS, 2
+            QUIT
+         FIN
+ACTION   SAVE
+         VALUE MUST.WAIT, MIN.TIME
+         VALUE OR.ITLL.COST, HASTE.COST
+         QUERY IS.THIS.OK?
+         ELSE
+            QUIP IF.NOT.NOT
+         FIN
+         IFEQ IV, 0
+         FIN
+         EXEC  1, IV      {save program image}
+         IFEQ IV, 0
+            QUERY CONTINUE.NOW?
+               QUIP OK
+            FIN
+            SAY BLANK
+            CHOOSE PTR.TEXT, WELL.MEET.AGAIN, NIAGA.TEEM.LLEW
+            SAY PTR.TEXT
+            SAY BLANK
+            STOP
+         ELSE
+            QUIP CANT.SAVE
+         FIN
+ACTION   RESTORE
+         BIT ADMIN, OLORIN
+            SET IV, 1
+         FIN
+         EXEC  6, IV         {save value of IV over RESTORE attempt}
+         EXEC  2, IV         {attempt to restore image}
+         IFEQ IV, 0         {all well}
+            EXEC  7, J      {restore pushed value}
+            IFEQ J, 1
+               BIS ADMIN, OLORIN
+            ELSE
+               BIC ADMIN, OLORIN
+            FIN
+            EXEC 8, IV    {get time (in minutes) since game dumped}
+            IFLT IV, MIN.TIME
+               VALUE TOO.SOON, MIN.TIME
+               VALUE IT.COSTS.YOU, HASTE.COST
+               ADD PENALTIES, 10
+            FIN
+            IFEQ LAMP, SWITCHED.ON     {if the lamp is on}
+               ADD LAMPLIFE, 1  {compensate for following move}
+            FIN
+            QUERY SAVE.THE.IMAGE
+               SAY OK
+            ELSE
+               CHOOSE PTR.TEXT, ITS.GONE, ENOG.STI
+               SAY PTR.TEXT
+               EXEC  3, IV         {flush the image}
+            FIN
+            GOTO HERE
+            SAY BLANK
+         ELSE
+            IFEQ IV, 1   {no file, or no image}
+               SAY NO.IMAGE
+               SUB   TURNS, 1     {let him try again}
+            ELSE                 {checksum failed!}
+               QUERY EXPLOSION   {well-house blew up}
+                  EXEC  3, IV     {delete the record}
+               FIN
+               SAY OK
+            FIN
+         FIN
+         QUIT
+ACTION   DRINK
+         IFKEY OIL
+            QUIP BE.SERIOUS!
+         FIN
+         IFEQ STATUS, 1
+            OR
+         IFKEY WATER
+            OR 
+         IFKEY BOTTLE
+            BIT HERE, H20.HERE
+               AND
+               NOT
+            IFKEY BOTTLE
+               LDA IV, SLURP
+               SET J, 900
+               CALL WATER!
+            FIN
+            IFKEY BOTTLE
+               IFHAVE ARG2
+               ELSE
+                  IFHERE ARG2
+                     QUIP PICK.IT.UP, ARG2
+                  FIN
+                  QUIP I.DONT.SEE, ARG2
+               FIN
+               EVAL IV, ARG2
+               IFEQ IV, FULL.OF.OIL
+                  QUIP NO.DRINK.OIL
+               FIN
+               IFEQ IV, EMPTIED
+                  QUIP CANT.DRINK.EMPTY, ARG2
+               FIN
+            FIN
+            IFNEAR BOTTLE, FULL.OF.WATER
+               AND
+               NOT
+            IFKEY WATER
+               QUIP I.DONT.SEE, ARG2
+            FIN
+            QUIP NOTHING.TO.DRINK
+         FIN
+         BIT ARG2, OBJECT
+            IFNEAR ARG2
+               QUIP HAH!
+            FIN
+            QUIP I.DONT.SEE, ARG2
+         FIN
+         QUIP BE.SERIOUS!
+ACTION   HISTORY
+         QUIP HISTORY.DATA
+ACTION   READ  NOTICE
+         IFAT HILL
+            QUIP NOTHING.MORE.TO.READ
+         FIN
+ACTION   READ
+         IFGT STATUS, 1
+            IFKEY TABLET
+               IFAT DARK
+                  QUIP DARK.ROOM
+               FIN
+            FIN
+            BIT ARG2, OBJECT
+               IFNEAR ARG2
+                  IFKEY MAGAZINES
+                     QUIP MAG.IN.DWARVISH
+                  FIN
+                  IFKEY MESSAGE
+                     QUIP IT.SAYS.CHEST.ELSEWHERE
+                  FIN
+                  IFKEY OYSTER
+                     CALL OYSTER.MESSAGE
+                  FIN
+                  IFKEY MACHINE
+                     QUIP MACHINE.SIGN
+                  FIN
+               FIN
+            ELSE
+               QUIP HAH!
+            FIN
+         FIN
+ACTION   CLIMB
+         IFINRANGE HERE, FOREST.1, FOREST.2
+            QUIP NO.CLIMBING
+         FIN
+         QUIP NOTHING.TO.CLIMB
+ACTION   LOST
+         QUIP I.AM.CONFUSED
+ACTION   RIDE
+         IFKEY RUG
+            CALL FLY
+         FIN
+ACTION   RUNOUT
+         BIT ADMIN, OLORIN   {wizard?}
+            SET CLOCK, 0
+            SMOVE HERE, OK!
+         FIN
+         QUIP WHAT?
+ACTION   SCREAM
+         SAY THE.SCREAM
+         QUIP FEELING.BETTER?
+ACTION   REST
+         IFGT STATUS, 1
+            CALL RESTORE      {They *always* type REST MYGAME}
+         FIN
+         IFAT BUILDING
+            QUIP YOU.REST
+         FIN
+         QUIP NO.REST
+ACTION   SLEEP
+         QUIP NO.SLEEP
+ACTION   CUT
+         IFEQ STATUS, 1
+            PROCEED
+         FIN
+         IFHAVE AXE
+         ELSE
+            QUIP NOTHING.TO.CUT.WITH
+         FIN
+         BIT ARG2, OBJECT
+            OR
+         IFKEY TREES
+         ELSE
+            QUIP HAH!
+         FIN
+         IFKEY TREES
+            QUIP NO.TIMBER
+         FIN
+         IFKEY PLANT
+            IFAT WEST.PIT
+               QUIP VANDAL!
+            FIN
+            IFAT WEST.PIT.END
+               AND
+            IFGT PLANT, STUNTED
+               QUIP VANDAL!
+            FIN
+         FIN
+ACTION   KICK
+         IFKEY MACHINE
+            OR
+         IFEQ STATUS, 1
+            AND
+         IFNEAR MACHINE
+            BIT BATTERIES, SEEN
+               AND
+               NOT
+            BIT DRACHMA, SEEN
+               BIS DRACHMA, SEEN
+               APPORT DRACHMA, HERE
+               QUIP DRACHMA.DROPS
+            FIN
+            QUIP NOTHING
+         FIN
+         IFEQ STATUS, 2
+         ELSE
+            PROCEED
+         FIN
+         BIT ARG2, VERB
+            QUIP HAH!
+         FIN
+         IFNEAR ARG2
+            IFKEY DWARF
+               AND
+            IFNEAR DWARF
+               IFEQ CLOSURE, IN.REPOSITORY
+                  SAY DWARF.WAKES
+               ELSE
+                  SAY DWARF.STABS
+               FIN
+               CALL CORONER
+            FIN
+            QUIP HAH!
+         FIN
+ACTION   REPLACE BATTERIES
+         IFNEAR BATTERIES
+            AND
+         IFLT BATTERIES, WORNOUT
+            SET LAMPLIFE, 400
+            SET BATTERIES, WORNOUT
+            QUIP SWAPPED.EM
+         FIN
+         QUIP NO.SPARES
+ACTION   FUCK
+         CHOOSE PTR.TEXT, FUCK.FIRST, FUCK.LAST
+         QUIP PTR.TEXT
+ACTION   WAKE
+         IFEQ STATUS, 2
+            IFNEAR ARG2
+               IFEQ CLOSURE, IN.REPOSITORY
+                  AND
+               IFKEY DWARF
+                  SAY DWARF.WAKES
+                  CALL CORONER
+               FIN
+               QUIP HAH!
+            FIN
+         FIN
+ACTION   BLAST
+         IFEQ CLOSURE, IN.REPOSITORY
+            AND
+         BIT DYNAMITE, SEEN
+            IFLOC DYNAMITE, YLEM
+               QUIP ENOUGH!
+            FIN
+            IFNEAR DYNAMITE
+               SAY YOU.EXPLODE
+               CALL CORONER
+            FIN
+            IFAT NE.REPOSITORY
+               SAY LAVA.FLOWS
+               CALL CORONER
+            FIN
+            APPORT DYNAMITE, YLEM     {No more dynamiting}
+            APPORT DWARF, YLEM
+*            QUIP KABOOM         {btb - Probably needs to be fixed when endgame is fixed}
+         FIN
+         QUIP NEED.DYNAMITE
+ACTION   WEAR
+         IFEQ STATUS, 1
+            OR
+            NOT
+         BIT ARG2, OBJECT
+            PROCEED
+         FIN
+         IFNEAR ARG2
+            BIT ARG2, WEARABLE
+            ELSE
+               QUIP BE.SERIOUS!
+            FIN
+            IFHAVE ARG2
+               EVAL J, ARG2
+               IFGT J, NOT.WORN
+                  QUIP YER.WEARING, ARG2
+               FIN
+            FIN
+            IFKEY HELMET
+               QUIP BAD.FIT
+            FIN
+            IFHAVE ARG2
+            ELSE
+               IFLT INVCT, STRENGTH
+                  OR
+               BIT ARG2, FREEBIE
+                  GET ARG2
+                  CALL PICKUP
+               ELSE
+                  QUIP ARMS.ARE.FULL
+               FIN
+            FIN
+            IFKEY JEWELRY
+               QUIP SUCH.VANITY
+            FIN
+            DEPOSIT ARG2, WORN    {N.B.: for crown WORN = ACTIVATED!}
+            BIS ARG2, FREEBIE
+            QUIT
+         FIN
+ACTION   REMOVE
+         IFKEY BIRD
+            AND
+         IFHAVE BIRD
+            CALL DROP.BIRD
+            QUIT
+         FIN
+         IFEQ STATUS, 1
+            PROCEED
+         FIN
+         BIT ARG2, WEARABLE
+         ELSE
+            QUIP HAH!
+         FIN
+         EVAL J, ARG2
+         IFLT J, WORN
+            OR
+            NOT
+         IFHAVE ARG2
+            QUIP YER.NOT.WEARING.IT
+         FIN
+         IFLT INVCT, STRENGTH
+         ELSE
+            QUIP ARMS.ARE.FULL
+         FIN
+         BIC ARG2, FREEBIE
+         DEPOSIT ARG2, NOT.WORN
+         SAY YOU.DO, ARG1
+         QUIP IT.IS, ARG2
+ACTION   USE
+         QUIP USE.TOO.VAGUE
+ACTION   REFLECT
+         IFEQ STATUS, 1
+            IFNEAR SHADOW
+               IFAT EAST.WINDOW
+                  GOTO WEST.WINDOW
+               ELSE
+                  GOTO EAST.WINDOW
+               FIN
+               BIC STATUS, MOVED
+               BIC SHADOW, SPECIAL2
+               QUIP NOTHING.OBVIOUS
+            FIN
+            IFNEAR MIRROR
+               QUIP PRETTY.REFLECTION
+            FIN
+            QUIP VAIN.REFLECTION
+         FIN
+         QUIP HAH!
+ACTION   TRANSLATE
+         IFEQ STATUS, 2
+            IFKEY MAGAZINES
+               OR
+            IFKEY DWARF
+            ELSE
+               QUIP HAH!
+            FIN
+         FIN
+         IFNEAR MAGAZINES
+            OR
+         IFNEAR DWARF
+            QUIP NO.SPEAK.DWARVISH
+         FIN
+         QUIP TRANSLATE.WHAT?, ARG1
+ACTION   YES
+         CHANCE 30
+            QUIP IS.THAT.SO?
+         FIN
+         CHANCE 50
+            QUIP WELL.THERE.IT.IS
+         FIN
+         QUIP I.SEE
+ACTION   VOCABULARY
+         LDA J, VOCAB.FIRST
+         LDA K, VOCAB.LAST
+         CALL KEEP.TALKING
+         QUIT
+ACTION   CROSS
+         IFAT ROAD
+            OR
+         IFAT VALLEY
+            OR
+         IFAT SLIT
+            OR
+         IFAT STREAMPIT
+            QUIP IVE.CROSSED
+         FIN
+         QUIP HAH!
+ACTION   LISTEN
+         IFAT BREATHTAKER
+            OR
+         IFAT WARMJUNCTN
+            QUIP NOT.IN.THIS.NOISE!
+         FIN
+         IFNEAR DWARF
+            QUIP NO.LISTENING
+         FIN
+         IFHERE BIRD
+            QUIP HEAR.MUSIC, BIRD
+         FIN
+         BIT HERE, NOT.IN.CAVE
+            AND
+            NOT
+         IFAT BUILDING
+            QUIP BIRDIES.SING
+         FIN
+         IFAT FORK
+            OR
+         IFAT CORRIDOR
+            OR
+         IFAT BOULDERS
+            QUIP EERIE.AINT.IT?
+         FIN
+         IFAT MISTY
+            OR
+         IFAT RESERVOIR
+            QUIP SPLASHING.NOISES
+         FIN
+         BIT PIRATE, SPECIAL1
+            AND
+            NOT
+         BIT HERE, NOT.IN.CAVE
+            AND
+            NOT
+         BIT HERE, LIT
+            QUIP RUSTLING
+         FIN
+         QUIP HEAR.NOTHING
+ACTION   SORRY
+         QUIP DONT.MENTION.IT
+ACTION   SWEAR
+         SAY OK!
+         SAY BLANK
+         CHOOSE IV, SWEAR.WORDS.FIRST, SWEAR.WORDS.LAST
+         SAY IV
+         QUIP FEELING.BETTER?
+ACTION   FOREST
+         IFINRANGE HERE, FOREST.1, FOREST.2
+            QUIP YOU.ARE.THERE
+         FIN
+         BIT HERE, NOT.IN.CAVE
+            QUIP PLENTY.OF.TREES, ARG1
+         FIN
+         QUIP NOT.AROUND.HERE, ARG1
+ACTION   DIE
+         BIT HERE, NOT.IN.CAVE
+            QUIP SUICIDE.SILLY
+         FIN
+         BIT HINTS, DEATH.IS.SIMPLE
+            QUIP FAKE.AN.ACCIDENT
+         FIN
+         QUERY REALLY.SUICIDE?
+            BIS HINTS, DEATH.IS.SIMPLE
+            QUIP WALK.WITHOUT.LIGHT
+         FIN
+         QUIP THINGS.COULD.BE.WORSE
+ACTION   ROLL RUG
+         IFNEAR RUG
+            IFEQ RUG, ROLLED.UP
+               QUIP RUG.ALREADY.IS, ROLLED.UP
+            FIN
+            SET RUG, ROLLED.UP
+            QUIP RUG.IS.NOW, ROLLED.UP
+         FIN
+ACTION   UNROLL RUG
+         IFNEAR RUG
+            IFEQ RUG, UNROLLED
+               QUIP RUG.ALREADY.IS, UNROLLED
+            FIN
+            IFHAVE RUG
+               BIT HINTS, UNROLLING.RUGS
+                  QUIP I.SAY.DROP.RUG.FIRST
+               FIN
+               BIS HINTS, UNROLLING.RUGS
+               QUIP DROP.RUG.FIRST
+            FIN
+            SET RUG, UNROLLED
+            QUIP RUG.IS.NOW, UNROLLED
+         FIN

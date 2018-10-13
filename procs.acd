@@ -1,0 +1,1791 @@
+*
+*        Stand-alone procedures follow.
+*
+PROC     CHECK.WEARING
+         BIT ARG2, WEARABLE
+            EVAL J, ARG2
+            IFGT J, NOT.WORN
+                  QUIP REMOVE.IT.FIRST, ARG2
+            FIN
+         FIN
+PROC     HANDLE.OIL
+         IFEQ STATUS, 1
+            IFNEAR BOTTLE, FULL.OF.OIL
+               OR
+            IFHERE OIL
+               BIS STATUS, PLS.CLARIFY
+               QUIP DO.WHAT?, OIL
+            FIN
+            QUIP I.DONT.SEE, OIL
+         FIN
+         QUIP HAH!
+PROC     HANDLE.WATER
+         IFEQ STATUS, 1
+            IFNEAR BOTTLE, FULL.OF.WATER
+               OR
+            BIT HERE, H20.HERE
+               BIS STATUS, PLS.CLARIFY
+               QUIP DO.WHAT?, ARG1
+            FIN
+            QUIP I.DONT.SEE, ARG1
+         FIN
+         QUIP HAH!
+PROC     IS.IT.DARK?
+         SET IV, IT.IS.DARK
+         IFNEAR LAMP, SWITCHED.ON
+            OR
+         BIT HERE, LIT
+            SET IV, IT.IS.NOT.DARK
+         FIN
+PROC     ZAP.BIRD
+         APPORT BIRD, YLEM
+         IFLOC SNAKE, MTKING
+            BIS MTKING, HINTABLE
+         FIN
+PROC     WATER!
+         SAY URRP
+         QUIT
+PROC     MAKE.A.DWARF
+         ADD DWARFCOUNT, 1      {resurrect a dwarf}
+PROC     KILL.SOME.DWARVES
+         ITOBJ M                    {Dummy counter!}
+            APPORT SWAG.TO.DROP, HERE
+            SUB SWAG.COUNT, 1
+            CALL IS.IT.DARK?
+            IFEQ IV, IT.IS.NOT.DARK
+               SAY SWAG.TO.DROP
+            FIN
+            SET SWAG.TO.DROP, 0
+            SUB DWARF, 1
+            SUB DWARFCOUNT, 1
+            IFEQ DWARF, 0
+               APPORT DWARF, LIMBO
+               PROCEED
+            FIN
+            SUB P, 1
+            IFEQ P, 0
+               PROCEED
+            FIN
+         EOI
+PROC     ALL.QUIET?
+         SET K, 1
+         CALL IS.IT.DARK?
+         IFEQ IV, IT.IS.DARK
+            PROCEED
+         FIN
+         SET K, 0
+         BIT STATUS, TICKED  {if CLOCK4 has not ticked}
+            OR
+         IFGT CLOSURE, STILL.OPEN {mustn't be in endgame}
+            OR
+         BIT HERE, NOT.IN.CAVE {only in the cave}
+            OR
+         BIT HERE, NO.DWARF   {and only in dwarf-accessable areas}
+            OR
+         BIT HERE, ONE.EXIT  {and only where there are several exits}
+            OR
+         BIT PIRATE, SPECIAL1 {and not if the pirate is chasing you}
+            OR
+         IFNEAR DWARF       {and not if you're being plagued by dwarves}
+            OR
+         IFNEAR DRAGON      {or near the dragon (living or dead) }
+            OR
+         IFNEAR TROLL       {or arguing with the troll}
+            OR
+         IFNEAR SNAKE       {or trying to get past the snake}
+            OR
+#          IFNEAR QUICKSAND   {or trying to cross the quicksand}
+#             OR
+         IFGT  FOOBAR, 0      {or trying to do something to the eggs}
+            SET K, 1
+         FIN
+# PROC     SWAP.DIRECTIONS
+#          IFEQ STATUS, 1
+#             SET J, ARG1        {J is just a number}
+#          ELSE
+#             SET J, ARG2
+#          FIN
+#          IFINRANGE J, FIRST.COMPASS.POINT, LAST.COMPASS.POINT
+#             ADD J, 4
+#             LDA K, LAST.COMPASS.POINT
+#             IFLT J, K
+#             ELSE
+#                SUB J, 8
+#             FIN
+#             IFEQ STATUS, 1
+#                EXEC 9, J
+#             ELSE
+#                EXEC 10, J
+#             FIN
+#          FIN
+PROC     CHEAT
+         SET TRUE.LOCATION, 0
+         IFEQ STATUS, 1
+            SET PTR.OBJ, ARG1
+         ELSE
+            SET PTR.OBJ, ARG2
+         FIN
+         BIT PTR.OBJ, OBJECT
+         ELSE
+            PROCEED
+         FIN
+         IFNEAR PTR.OBJ
+            PROCEED
+         FIN
+         IFKEY ROD
+            BIT ROD, SEEN
+               AND
+            IFNEAR DYNAMITE
+               AND
+               NOT
+            IFNEAR ROD
+               PROCEED
+            FIN
+         FIN
+         BIT PTR.OBJ, SPECIAL1
+            OR
+         BIT PTR.OBJ, SPECIAL2
+         ELSE
+            PROCEED
+         FIN
+         BIT PTR.OBJ, SPECIAL1
+            IFAT NE.REPOSITORY
+            ELSE
+               PROCEED
+            FIN
+         ELSE
+            IFAT SW.REPOSITORY
+            ELSE
+               PROCEED
+            FIN
+         FIN
+         IFKEY GET
+            IFKEY DWARF
+               QUIP HAH!
+            FIN
+            BIT PTR.OBJ, SEEN
+               QUIP ALREADY.HAD.ONE, ARG2
+            FIN
+            IFLT INVCT, STRENGTH
+               BIS PTR.OBJ, SEEN
+            ELSE
+               FLUSH
+               QUIP ARMS.ARE.FULL
+            FIN
+         FIN
+         LOCATE TRUE.LOCATION, PTR.OBJ
+         APPORT PTR.OBJ, HERE             {Cheat!}
+PROC     STOP.CHEATING
+         IFEQ TRUE.LOCATION, 0
+         ELSE
+            IFEQ STATUS, 1
+               SET PTR.OBJ, ARG1
+            ELSE
+               SET PTR.OBJ, ARG2
+            FIN
+            BIT PTR.OBJ, OBJECT
+            ELSE
+               PROCEED
+            FIN
+            IFHAVE PTR.OBJ
+            ELSE
+               APPORT PTR.OBJ, TRUE.LOCATION
+            FIN
+         FIN
+PROC     DEBRIS.QUIP
+         IFAT DEBRIS
+            QUIP NO.FUTURE.IN.DEBRIS
+         FIN
+         QUIP WHERE?, DEBRIS
+PROC     ROD.SPECIAL.STUFF
+         IFKEY GET
+            IFHERE ROD
+               PROCEED
+            FIN
+            IFHAVE DYNAMITE
+               QUIP YOU.HAVE.IT, ARG2
+            FIN
+            IFNEAR DYNAMITE
+            ELSE
+               IFAT SW.REPOSITORY
+                  BIT DYNAMITE, SEEN
+                     QUIP ALREADY.HAD.ONE, ARG2
+                  FIN
+               ELSE
+                  PROCEED
+               FIN
+            FIN
+            IFLT INVCT, STRENGTH
+               GET DYNAMITE
+               BIS DYNAMITE, SEEN
+               SET TRUE.LOCATION, 0
+               SAY YOU.DO, ARG1
+               QUIP IT.IS, ARG2
+            FIN
+            FLUSH
+            QUIP ARMS.ARE.FULL
+         FIN
+         IFKEY DROP
+            OR
+         IFKEY THROW
+            IFHAVE ROD
+               PROCEED
+            FIN
+            IFHAVE DYNAMITE
+               DROP DYNAMITE
+               SAY YOU.DO, ARG1
+               QUIP IT.IS, ARG2
+            FIN
+            QUIP YOU.DONT.HAVE, ARG2
+         FIN
+         IFKEY WAVE
+            IFHAVE ROD
+               OR
+            IFHAVE DYNAMITE
+               QUIP NOTHING
+            FIN
+            QUIP YOU.DONT.HAVE, ARG2
+         FIN
+         IFKEY LOOK
+            IFNEAR ROD
+               AND
+               NOT
+            IFHAVE DYNAMITE
+               OR
+            IFHAVE ROD
+               QUIP NOTHING.SPECIAL, ARG2
+            ELSE
+               BIS STATUS, DETAILDISPLAY
+               SAY DYNAMITE
+               BIC STATUS, DETAILDISPLAY
+               QUIT
+            FIN
+         ELSE
+            QUIP ROD.FIDDLING
+         FIN
+PROC     OYSTER.MESSAGE
+         IFEQ CLOSURE, IN.REPOSITORY
+         ELSE
+            QUIP CANT.READ.OYSTER
+         FIN
+         IFHAVE OYSTER
+         ELSE
+            QUIP OYSTER.IS.BARE
+         FIN
+         BIT OYSTER, BIG        {read before?}
+            QUIP SAME.AS.BEFORE
+         FIN
+         VALUE OYSTER.IS.HINT, HINT.COST
+         QUERY READ.OYSTER?
+            BIS OYSTER, BIG     {mark as read}
+            ADD PENALTIES, HINT.COST
+            QUIP OYSTER.MEMO
+         FIN
+         QUIP AS.YOU.WISH
+PROC     GET.SCORE
+         IFEQ QUITTING, 0
+            OR
+         IFGT CLOSURE, EXITS.BARRED
+            SET SCOREX, 10
+         ELSE
+            SET SCOREX, 0
+         FIN
+         SET MAXSCORE, 10
+         ITOBJ PTR.OBJ
+            BIT PTR.OBJ, VALUED
+               IFLOC PTR.OBJ, BUILDING
+                  ADD SCOREX, 15              {on escape from same}
+               ELSE
+                  BIT PTR.OBJ, SEEN
+                     ADD SCOREX, 7
+                  FIN
+               FIN
+               ADD MAXSCORE, 15
+            FIN
+         EOI
+*        Give him points for the coin. Note that since the coin cannot appear
+*        unless the coins (plural) are spent, there is no need to up MAXSCORE.
+*
+         BIT DRACHMA, SEEN
+            ADD SCOREX, 1
+            IFLOC DRACHMA, BUILDING
+               ADD SCOREX, 1
+            FIN
+         FIN
+*
+         NOT
+         IFLOC MAGAZINES, WITTS.END
+            ADD SCOREX, 1
+         FIN
+         ADD MAXSCORE, 1           {Maximal mags credit}
+*
+         BIT DEBRIS, BEEN.HERE
+            ADD SCOREX, 12
+         FIN
+         BIT BREATHTAKER, BEEN.HERE 
+            ADD SCOREX, 12
+         FIN
+         BIT Y2, BEEN.HERE
+            ADD SCOREX, 12
+         FIN
+         ADD MAXSCORE, 36      {Maximal exploration credit}
+*
+         SET IV, CLOSURE  {stages 0 through 3}
+         MULT IV, CLOSURE.CREDIT
+         ADD SCOREX, IV
+         ADD MAXSCORE, 48      {Maximal closure credit - 16 per stage}
+*
+         SET LV, DEATHS
+         MULT LV, 10
+         SUB SCOREX, LV
+*
+         SUB SCOREX, PENALTIES
+*
+         IFLT SCOREX, 0
+            SET SCOREX, 0
+         FIN
+*
+PROC     FINIS
+         CALL GET.SCORE
+         VALUE YOU.SCORED, SCOREX
+         VALUE MAXIMAL.SCORE, MAXSCORE
+         VALUE MOVE.COUNT, TURNS
+         SAY BLANK
+         SET J, SCOREX
+         IFLT SCOREX, 30
+            SAY AMATEUR
+            SUB J, 30
+         ELSE
+            IFLT SCOREX, 100
+               SAY NOVICE
+               SUB J, 100
+            ELSE
+               IFLT SCOREX, 200
+                  SAY APPRENTICE
+                  SUB J, 200
+               ELSE
+                  IFLT SCOREX, 300
+                     SAY EXPERIENCED
+                     SUB J, 300
+                  ELSE
+                     IFLT SCOREX, 400
+                        SAY SEASONED
+                        SUB J, 400
+                     ELSE
+                        IFLT SCOREX, 500
+                           SAY JUNIOR.MASTER
+                           SUB J, 500
+                        ELSE
+                           IFLT SCOREX, 600
+                              SAY MASTER.ADVENTURER
+                              SUB J, 600
+                           ELSE
+                              IFLT SCOREX, 650
+                                 SAY SENIOR.MASTER
+                                 SUB J, 650
+                              ELSE
+                                 IFLT SCOREX, 660
+                                    SAY GRANDMASTER
+                                    SUB J, 660
+                                 ELSE
+                                    SAY CHEATER
+                                    SET J, 0
+                                 FIN
+                              FIN
+                           FIN
+                        FIN
+                     FIN
+                  FIN
+               FIN
+            FIN
+         FIN
+         SAY BLANK
+         MULT J, -1
+         IFGT J, 0
+            IFEQ J, 1
+               SAY ONLY.NEED.ONE.POINT
+            ELSE
+               VALUE POINTS.NEEDED, J
+            FIN
+         FIN
+         SAY BLANK
+         STOP
+PROC     CORONER
+         SET QUITTING, 0
+         FLUSH
+         SAY BLANK
+         BIC ADMIN, NOMAGIC                {reset magic-inhibit mode}
+         BIC ADMIN, TICKER                 {clear once-per-move}
+         ADD DEATHS, 1
+         IFGT CLOSURE, CLOSING.SOON
+            IFEQ CLOSURE, EXITS.BARRED
+               SAY DEAD.&.CLOSED
+            ELSE
+               SUB DEATHS, 1 {don't charge for dying in repository}
+            FIN
+            CALL FINIS
+         FIN
+         LDA PTR.TEXT, YOU.ARE.DEAD-2
+         ADD PTR.TEXT, DEATHS
+         ADD PTR.TEXT, DEATHS
+         QUERY PTR.TEXT
+            ADD PTR.TEXT, 1
+            SAY PTR.TEXT
+            SAY BLANK
+            LDA J, SNIDELEY-1      {J does not need to be a pointer}
+            IFLT PTR.TEXT, J
+               IFHAVE VASE
+                  APPORT VASE, YLEM
+                  GET POTTERY
+               FIN
+               IFHAVE BOTTLE
+                  SET BOTTLE, EMPTIED
+               FIN
+               ITOBJ PTR.OBJ
+                  IFHAVE PTR.OBJ
+                     DROP PTR.OBJ
+                  FIN
+               EOI
+               SET INVCT, 0
+               SET LAMP, SWITCHED.OFF
+               GOTO  BUILDING
+               SET THERE, 0
+               APPORT LAMP, ROAD
+               IFEQ LAMPLIFE, 0
+                  ELSE
+                     LOCATE   PTR.PLACE, BATTERIES
+                     IFEQ BATTERIES, WORNOUT
+                        OR
+                        NOT
+                     BIT PTR.PLACE, NOT.IN.CAVE
+                        APPORT LAMP, YLEM
+                     FIN
+
+               FIN
+               APPORT DWARF, LIMBO
+               SET DWARF, 0
+               BIC PIRATE, SPECIAL1   {clear chasing mode}
+               QUIT
+            FIN
+         FIN
+         CALL FINIS
+PROC     SNEAKS.DIE
+         CALL IS.IT.DARK?
+         IFEQ IV, IT.IS.DARK
+            SAY SNEAKY.CRUNCH
+            CALL CORONER
+         FIN
+PROC     HERE.YOU.CAN.SEE     {Note, this code works badly when in LIMBO!}
+         SET K, 0             {due to many objects there having no description}
+         SET J, 1
+         ITOBJ PTR.OBJ        {Should be OK-ish in other places, particularly}
+            IFHERE PTR.OBJ    {in the building, where it is mostly needed}
+               BIS PTR.OBJ, SEEN
+               IFEQ J, 1
+                  AND
+                  NOT
+               BIT PTR.OBJ, FEATURE
+                  SET J, 0
+                  SAY BLANK
+               FIN
+               IFEQ K, 20
+                  SET K, 0
+                  LDA PTR.TEMP, DWARF
+                  IFLT PTR.OBJ, PTR.TEMP
+                     QUERY WANT.SEE.REST?
+                     ELSE
+                        LDA PTR.OBJ, DWARF     {Do end of loop!}
+                     FIN
+                  FIN
+                  SUB PTR.OBJ, 1
+               ELSE
+                  ADD K, 1
+                  BIS PTR.OBJ, SEEN
+                  SAY PTR.OBJ
+               FIN
+            FIN
+         EOI
+PROC     DESCRIBE.HERE
+         SAY HERE
+         IFINRANGE HERE, FOREST.1, FOREST.2
+            SAY IN.FOREST
+         FIN
+         IFGT J, 0
+               IFAT PIT
+                  AND
+               IFEQ MISTS, STEPS.PRESENT
+                  SAY ROUGH.STEPS
+               FIN
+         FIN
+         BIT HERE, DAMP
+            SAY GROUND.IS.DAMP
+         FIN
+         CALL HERE.YOU.CAN.SEE
+         IFHAVE BEAR
+            SAY BEAR.FOLLOWS
+         FIN
+PROC     GET.BIRD
+         NEAR BIRD
+            IFHAVE BIRD
+               QUIP YOU.HAVE.IT, BIRD
+            FIN
+            IFEQ BIRD, CAGED
+               GET CAGE
+               BIS CAGE, SEEN    {for repository handling}
+               GET BIRD
+               SAY YOU.DO, ARG1
+               QUIP CAGE.WITH.BIRD
+            FIN
+            IFHAVE CAGE
+               IFHAVE ROD
+                  QUIP BIRD.IS.SCARED
+               FIN
+               BIC BIRD.CHAMBER, HINTABLE
+               GET BIRD
+               SET BIRD, CAGED
+               QUIP YOU.CATCH.BIRD
+            FIN
+            QUIP NEED.CAGE
+PROC     GET.CAGE
+         NEAR CAGE
+            IFHAVE CAGE
+               QUIP YOU.HAVE.IT, CAGE
+            FIN
+            GET CAGE
+            SAY YOU.DO, ARG1
+            IFEQ BIRD, CAGED
+               GET BIRD
+               BIS BIRD, SEEN   {for repository handling}
+               QUIP CAGE.WITH.BIRD
+            FIN
+            QUIP IT.IS, ARG2
+PROC     GET.KNIFE
+         IFHERE DWARF
+            QUIP KNIVES.GO.POOF
+         FIN
+PROC     DROP.BIRD
+         HAVE BIRD
+            DROP BIRD
+            SET BIRD, FREED
+            IFNEAR SNAKE
+               APPORT SNAKE, YLEM
+               BIC MTKING, HINTABLE
+               QUIP BIRD.V.SNAKE
+            FIN
+            IFNEAR DRAGON
+               IFEQ DRAGON, ON.RUG
+                  CALL ZAP.BIRD
+                  QUIP BIRD.V.DRAGON
+               FIN
+               QUIP YOU.FREE, ARG2
+            FIN
+            IFNEAR TROLL
+               QUIP BIRD.V.TROLL       {ignore bird}
+            FIN
+            IFNEAR BEAR
+               IFEQ BEAR, CHAINED.FEROCIOUS
+                  CALL ZAP.BIRD
+                  QUIP BIRD.V.BEAR  {catch and devour bird}
+               FIN
+               QUIP BIRD.IGNORES.BEAR
+            FIN
+            IFNEAR DWARF
+               CALL ZAP.BIRD
+               VALUE BIRD.V.DWARF, DWARF
+               QUIT
+            FIN
+            IFAT SW.REPOSITORY
+               IFLOC DYNAMITE, YLEM
+               ELSE
+                  SAY BIRD.V.SNAKES
+                  SAY DWARVES.WAKE
+                  CALL CORONER
+               FIN
+            FIN
+            SAY YOU.FREE, ARG2
+            QUIT
+PROC     DROP.CAGE
+         HAVE CAGE
+            DROP CAGE
+            SAY YOU.DO, ARG1
+            IFHAVE BIRD
+               DROP BIRD
+               SAY CAGE.WITH.BIRD
+            ELSE
+               SAY IT.IS, ARG2
+            FIN
+         QUIT
+PROC     DROP.VASE
+         HAVE VASE
+            DROP VASE
+            IFAT SOFT
+               SAY YOU.DO, ARG1
+               SAY IT.IS, ARG2
+            ELSE
+                  IFHAVE PILLOW
+                     OR
+                     NOT
+                  IFNEAR PILLOW
+                     SET VASE, 2
+                     SAY VASE
+                     APPORT VASE, YLEM
+                     APPORT POTTERY, HERE
+                  ELSE
+                     SET VASE, 1
+                     SAY VASE
+                     SET VASE, 0
+                  FIN
+            FIN
+            QUIT
+PROC     DROP.LIQUID
+         IFEQ ARG2, WATER
+            SET J, FULL.OF.WATER
+         ELSE
+            SET J, FULL.OF.OIL
+         FIN
+         IFHAVE BOTTLE, J
+            SET BOTTLE, EMPTIED
+            IFNEAR DWARF
+               AND
+            IFKEY THROW
+               BIS DWARF, SPECIAL2               {Dvarves furious!}
+               IFEQ DWARF, 1
+                  QUIP DOUSED.DWARF, ARG2
+               FIN
+               QUIP DOUSED.DWARVES, ARG2
+            FIN
+            QUIP POUR.LIQUID, ARG2
+         FIN
+PROC     DROP.BOTTLE
+         HAVE BOTTLE
+            SET IV, BOTTLE
+            DROP BOTTLE
+            SET BOTTLE, EMPTIED
+            SAY YOU.DO, ARG1
+            SAY IT.IS..., ARG2
+            IFEQ IV, FULL.OF.WATER
+               BIS HERE, DAMP
+               QUIP IT.POURS.OUT, WATER
+            FIN
+            IFEQ IV, FULL.OF.OIL
+               BIS HERE, DAMP
+               QUIP IT.POURS.OUT, OIL
+            FIN
+            QUIP BLANK
+PROC     GET.OIL
+         IFHERE OIL
+            IFHAVE BOTTLE
+            ELSE
+               QUIP NO.WAY.TO.CARRY, OIL
+            FIN
+            IFHAVE BOTTLE, EMPTIED
+               SET BOTTLE, FULL.OF.OIL
+               QUIP BOTTLE.NOW.FULL, OIL
+            FIN
+            IFHAVE BOTTLE
+               QUIP BOTTLE.ALREADY.FULL
+            FIN
+         FIN
+PROC     GET.WATER
+         BIT HERE, H20.HERE
+         ELSE
+            PROCEED
+         FIN
+         IFHAVE BOTTLE
+         ELSE
+            QUIP NO.WAY.TO.CARRY, WATER
+         FIN
+         IFHAVE BOTTLE, EMPTIED
+            SET BOTTLE, FULL.OF.WATER
+            QUIP BOTTLE.NOW.FULL, WATER
+         FIN
+         IFHAVE BOTTLE
+            QUIP BOTTLE.ALREADY.FULL
+         FIN
+PROC     KILL.DRAGON
+         IFGT DRAGON, ON.RUG
+            QUIP IT.IS.DEAD
+         FIN
+         QUERY WITH.WHAT?
+            SET DRAGON, DEAD.BODY
+            APPORT RUG, SECRET.N/E.CANYON.1
+            BIC DRAGON, SCHIZOID
+            ITOBJ PTR.OBJ
+               IFHERE PTR.OBJ
+                  APPORT PTR.OBJ, SECRET.N/E.CANYON.1
+               FIN
+            EOI
+            SMOVE SECRET.N/E.CANYON.1, DRAGON.VANQUISHED
+         FIN
+         SAY USE.A.WEAPON, ARG1
+         QUIP KILL.THE.WHATEVER, ARG2
+PROC     KILL.BIRD
+         IFLT CLOSURE, IN.REPOSITORY
+            CALL ZAP.BIRD
+            QUIP BIRD.IS.DEAD
+         FIN
+         QUIP LEAVE.BIRD
+PROC     KILL.DWARF
+         QUERY WITH.WHAT?
+            SET IV, STRENGTH
+            SUB IV, INVCT
+            ADD IV, 2
+            MULT IV, 10
+            CHANCE   IV
+               SET P, 1
+               SAY  KILLED.DWARF
+               CALL KILL.SOME.DWARVES
+               QUIT
+            FIN
+            CHANCE   IV
+               QUIP DWARF.DODGES
+            FIN
+            SAY DWARF.STABS
+            CALL CORONER
+         FIN
+         SAY USE.A.WEAPON, ARG1
+         QUIP KILL.THE.WHATEVER, ARG2
+PROC     GET.BEAR
+         NEAR BEAR
+            IFHAVE BEAR
+               QUIP ALREADY.GOT.BEAR
+            FIN
+            IFAT BEAR.ROOM
+               AND
+            IFLT BEAR, UNCHAINED
+               QUIP BEAR.IS.CHAINED
+            FIN
+            GET BEAR
+            QUIP GOT.BEAR
+PROC     SPLATTER
+*
+*        Label SPLATTER should be called any time it is desirable to have
+*        the adventurer fall to a painful death.  One of a series of
+*        text messages will be output, depending on how many times he
+*        has been killed so far during this game.  Before calling SPLATTER,
+*        the calling routine should GOTO the place that is at the bottom of
+*        whatever the adventurer has jumped into - if that place isn't
+*        well-defined (bottom of the chasm, volcanic gorge, etc), then
+*        go to Ylem.
+*
+         LDA PTR.TEXT, PLUMMET
+         ADD PTR.TEXT, DEATHS
+         SAY PTR.TEXT
+         CALL CORONER
+PROC     DO.CAMEO          {generate strange cameo appearances if possible}
+         BIS  ADMIN, CAMEO.TRIED {at most one per game}
+         CALL ALL.QUIET?
+         IFEQ K, 1
+            PROCEED
+         FIN
+         BIS STATUS, TICKED      {pretend clock ticked, to disable mutters}
+         SAY BLANK
+         CHOOSE PTR.TEXT, CAMEO, LAST.CAMEO
+         SAY PTR.TEXT
+PROC     CLOSE.THE.CAVE
+         SAY CAVE.NOW.CLOSED
+         ITOBJ PTR.OBJ
+            BIC PTR.OBJ, SEEN
+            BIC PTR.OBJ, SPECIAL1
+            BIC PTR.OBJ, SPECIAL2
+            BIT PTR.OBJ, PORTABLE
+               IFHAVE PTR.OBJ
+                  DROP PTR.OBJ
+               FIN
+            FIN
+         EOI
+         APPORT MIRROR, SW.REPOSITORY
+         BIS BOTTLE SPECIAL1
+         SET BOTTLE, EMPTIED
+         BIS PLANT, SPECIAL1
+         BIS OYSTER, SPECIAL1
+         SET OYSTER, 0
+         BIS OYSTER, UNSTABLE {state 0 in repository means un-remarked}
+         BIC OYSTER, BIG      {in repository used as a 'read' flag}
+         BIS ROD, SPECIAL1
+         BIS LAMP, SPECIAL1
+         SET LAMP, SWITCHED.OFF
+         SET LAMPLIFE, 0
+         BIS DWARF, SPECIAL1
+         SET DWARF, 0
+         BIS DYNAMITE, SPECIAL2
+         BIS SNAKE, SPECIAL2
+         BIS CAGE, SPECIAL2
+         SET CAGE, 1              {No longer just discarded!}
+         BIS BIRD, SPECIAL2
+         SET BIRD, CAGED                      {Cage the bird}
+         BIS PILLOW, SPECIAL2
+         ITPLACE PTR.PLACE
+            BIT PTR.PLACE, NOT.IN.CAVE
+               BIC PTR.PLACE, BEEN.HERE
+            FIN
+         EOI
+         SET CLOSURE, IN.REPOSITORY
+         SET SLIT, 1      {Convert slit into gap}
+         SET CLOCK, 999
+         SET THERE, 0     {Invalidate return location}
+         MOVE NE.REPOSITORY
+PROC     HOUSE.INVENTORY
+         ITOBJ PTR.OBJ
+            BIT PTR.OBJ, VALUED
+               IFLOC PTR.OBJ, BUILDING     {If where it should be...}
+                     OR
+               IFLOC PTR.OBJ, YLEM         {...or gone for good}
+               ELSE
+                  PROCEED
+               FIN
+            FIN
+         EOI
+PROC     EVENTS                    {Administrative clock has ticked}
+         BIS STATUS, TICKED
+         IFEQ CLOSURE, STILL.OPEN
+            CALL HOUSE.INVENTORY   {See if all treasures in the house}
+            IFEQ CLOSURE, CLOSING.SOON
+               SET CLOCK, 35
+            ELSE
+               CHOOSE CLOCK, 30, 39
+            FIN
+            IFEQ DRAGON, DEAD.BODY
+               SUB DRAGTIME, LASTCLOCK
+               IFLT DRAGTIME, 0
+                  SET DRAGON, ROTTING.CARCASS
+               FIN
+            FIN
+            BIT MISTS, BEEN.HERE
+               OR
+            BIT Y2, BEEN.HERE
+               BIT HERE, NOT.IN.CAVE
+                  OR
+               BIT HERE, NO.DWARF
+                  CHOOSE CLOCK, 8, 17
+               ELSE
+                  CALL IS.IT.DARK?
+                  IFEQ IV, IT.IS.NOT.DARK            {only if not dark}
+                     AND
+                  IFGT MOVES, 150      {have we been here a while without}
+                     AND
+                     NOT
+                  BIT PIRATE, SEEN    {seeing him at least once?}
+                     OR
+                  BIT PIRATE, SPECIAL1   {or, was he chasing us?}
+                     OR
+                  CHANCE  10           {or, 10% of the time}
+                     AND
+                     NOT
+                  BIT CHEST, SEEN     {haven't found his chest yet}
+                     AND
+                     NOT
+                  IFNEAR DWARF       {and, not under attack by dwarves}
+                     AND
+                     NOT
+                  BIT HERE, LIT       {and, this place is dark}
+                     BIC PIRATE, SPECIAL1      {clear "chasing"}
+                     SET J, 0
+                     ITOBJ PTR.OBJ
+                        IFNEAR PTR.OBJ, VALUED
+                           APPORT PTR.OBJ, MAZEA.114
+                           SET J, 1
+                        FIN
+                     EOI
+                     IFEQ J, 0
+                        BIT PIRATE, SEEN    {first time thru?}
+                           OR
+                        IFLT MOVES, 150   {have we been here a while?}
+                           SAY RUSTLING
+                           BIS PIRATE, SPECIAL1    {set "following"}
+                           CHOOSE CLOCK, 4, 13
+                        ELSE
+                           APPORT CHEST, MAZEA.114
+                           APPORT MESSAGE, MAZED.140
+                           BIS PIRATE, SEEN
+                           SAY PIRATE.RUNS
+                        FIN
+                     ELSE
+                        BIT PIRATE, SEEN
+                           SAY ROBBED.AGAIN!
+                        ELSE
+                           SAY PIRATE.ROBS
+                           BIS PIRATE, SEEN
+                           APPORT CHEST, MAZEA.114
+                           APPORT MESSAGE, MAZED.140
+                        FIN
+                     FIN
+                  ELSE      {don't invoke pirate}
+                     SET IV, DWARFCOUNT
+                     ADD IV, 2
+                     MULT IV, 10
+                     IFNEAR DWARF
+                        OR
+                     CHANCE   IV
+                        AND
+                     IFLT DWARF, DWARFCOUNT  {more dwarves left...}
+                        BIT AXE, SEEN    {seen first dwarf?}
+                           APPORT DWARF, HERE
+                           ADD DWARF, 1
+                           IFEQ DWARF, 1
+                              CALL IS.IT.DARK?
+                              IFEQ IV, IT.IS.NOT.DARK
+                                 SAY DWARF {announce him}
+                              FIN
+                              BIS DWARF, SPECIAL1  {first knife not thrown}
+                              BIC DWARF, SPECIAL2  {not enraged}
+                           FIN
+                        ELSE   {first dwarf, coming up!}
+                           BIT HERE, ONE.EXIT
+                           ELSE
+                              CALL IS.IT.DARK?
+                              IFEQ IV, IT.IS.NOT.DARK
+                                 APPORT AXE, HERE
+                                 BIS AXE, SEEN
+                                 SAY FIRST.DWARF
+                              FIN
+                           FIN
+                        FIN
+                     FIN
+                  FIN
+               FIN
+            FIN
+         ELSE
+            IFEQ CLOSURE, CLOSING.SOON       {Is it near closing time?}
+               SET CLOSURE, EXITS.BARRED
+               SET GRATE, LOCKED
+               SAY CLOSING.NOW               {Sepulchral voice}
+               IFNEAR DWARF
+                  VALUE DWARF.QUITS, DWARF {fades into the gloom}
+               FIN
+               APPORT DWARF, LIMBO   {get rid of him/them}
+               SET DWARF, 0          {zilch all present dwarves}
+               SET DWARFCOUNT, 0     {don't let him reappear}
+               SET SWAG.COUNT, 0
+               SET SWAG.TO.DROP, 0
+               SET FISSURE, 0      {destroy bridge}
+               SET VOLCANO, 0      {destroy wheatstone bridge}
+               APPORT TROLL, YLEM  {remove troll}
+               APPORT DRAGON, YLEM {remove dragon}
+               SET TROLL, GONE.FOR.GOOD {scared - inhibit return}
+               APPORT TROLL2, SW.OF.CHASM {fetch fake troll}
+               BIS FISSURE, FEATURE
+               BIS VOLCANO, FEATURE
+               SET CLOCK, 30       {time to try to leave}
+            ELSE                    {must be closing time!}
+               BIT ADMIN, PANICKED {did he try to get out?}
+                  BIC ADMIN, PANICKED {reset panic flag}
+                  SET CLOCK, 15    {let him get frantic}
+               ELSE                 {if he was calm}
+                  CALL CLOSE.THE.CAVE
+               FIN
+            FIN
+         FIN
+         SET LASTCLOCK, CLOCK
+PROC     BAIL.OUT
+         IFKEY OIL
+            CALL HANDLE.OIL
+         FIN
+         IFKEY WATER
+            CALL HANDLE.WATER
+         FIN
+         IFEQ STATUS, 1
+            IFINRANGE ARG1, FIRST.CLARIFY, LAST.CLARIFY
+               OR
+            IFKEY SAY
+               BIS  STATUS, PLS.CLARIFY   {request clarification}
+               QUIP COULD.YOU.CLARIFY?, ARG1
+            FIN
+            IFINRANGE ARG1, FIRST.TRAVEL, LAST.TRAVEL
+               SAY DONT.KNOW.THE.WAY
+            ELSE
+               IFINRANGE ARG1, FIRST.PSEUDO, FIRST.GENERAL
+                  SAY I.DONT.SEE, ARG1
+               ELSE
+                  SAY WHAT.ABOUT.IT
+               FIN
+            FIN
+         ELSE
+            IFEQ STATUS, 2
+               AND
+            BIT ARG2, OBJECT
+               IFKEY WATER
+                  AND
+               BIT HERE, H20.HERE
+                  QUIP WATER.IS.FOR.DRINKING
+               FIN
+               IFNEAR ARG2
+                  SAY DUNNO.HAO, ARG1
+                  SAY SUCH.A.THING, ARG2
+               ELSE
+                  SAY I.DONT.SEE, ARG2
+               FIN
+            ELSE
+               IFINRANGE ARG2, FIRST.PSEUDO, LAST.PSEUDO
+                  IFKEY HIT
+                     SAY HAH!
+                  ELSE
+                     IFINRANGE ARG2, FIRST.PSEUDO, FIRST.GENERAL
+                        SAY I.DONT.SEE, ARG2
+                     ELSE
+                        SAY DUNNO.HAO, ARG1
+                        SAY SUCH.A.THING, ARG2
+                     FIN
+                  FIN
+               ELSE
+                  CHOOSE IV, NO.UNDERSTAND.FIRST, NO.UNDERSTAND.LAST
+                  SAY IV
+               FIN
+            FIN
+         FIN
+         QUIT
+PROC     LAMPREY          {Lamp getting dim or has gone out}
+         IFGT LAMPLIFE, 0
+            IFEQ BATTERIES, WORNOUT
+               SAY LAMP.GETTING.DIM
+            ELSE
+               IFNEAR BATTERIES
+                  SAY LAMP.REFUEL
+                  SET BATTERIES, WORNOUT
+                  SET LAMPLIFE, 400
+               ELSE
+                  BIT BATTERIES, SEEN
+                     SAY LAMP.BATTERIES
+                  ELSE
+                     IFINRANGE HERE, MAZEA.42, MAZEA.BY.PIT
+                        VALUE LAMP.IS.DIM, 1
+                     ELSE
+                        IFINRANGE HERE, MAZED.107, MAZED.140
+                           VALUE LAMP.IS.DIM, 2
+                        ELSE
+                           VALUE LAMP.IS.DIM, 0
+                        FIN
+                     FIN
+                  FIN
+               FIN
+            FIN
+         ELSE
+            IFEQ CLOSURE, EXITS.BARRED
+               CALL CLOSE.THE.CAVE
+            ELSE
+               IFNEAR BATTERIES, FRESH
+                  SAY LAMP.REFUEL
+                  SET BATTERIES, WORNOUT
+                  ADD LAMPLIFE, 400
+               ELSE
+                  SAY LAMP.IS.DEAD
+                  SET LAMP, SWITCHED.OFF
+                  BIS ADMIN, RANOUT      {don't fall in a pit this move}
+               FIN
+            FIN
+         FIN
+PROC     WISE.GUY
+         BIS HERE, SMARTASS
+         IFINRANGE HERE, MAZEA.42, MAZEA.BY.PIT
+            ITERATE PTR.PLACE, MAZEA.42, MAZEA.BY.PIT
+               BIS PTR.PLACE, SMARTASS
+            EOI
+         FIN
+         IFINRANGE HERE, MAZED.107, MAZED.140
+            ITERATE PTR.PLACE, MAZED.107, MAZED.140
+               BIS PTR.PLACE, SMARTASS
+            EOI
+         FIN
+PROC     HINT.LOGIC
+         BIT HERE, SMARTASS
+            AND
+            NOT
+         IFKEY HELP
+            OR
+            NOT
+         BIT HERE, HINTABLE
+            PROCEED
+         FIN
+         SET PTR.TEXT, 0
+         IFAT DEPRESSION
+            AND
+         IFEQ GRATE, LOCKED
+            AND
+            NOT
+         IFHAVE KEYS
+            LDA PTR.TEXT, CANT.GET.IN?
+         FIN
+         IFAT BIRD.CHAMBER
+            AND
+         IFNEAR BIRD, FREED
+            AND
+         IFHAVE ROD
+            LDA PTR.TEXT, BIRD.HINT?
+         FIN
+         IFAT MTKING
+            AND
+         IFNEAR SNAKE
+            BIT HINTS, SNAKE.PENDING
+               IFKEY HELP
+                  AND
+                  NOT
+               BIT HERE, SMARTASS
+               ELSE
+                  LDA PTR.TEXT, SNAKE.HINT.2?
+               FIN
+            ELSE
+               IFLOC BIRD, YLEM
+                  LDA PTR.TEXT, NOGET.PAST.SNAKE?
+               ELSE
+                  LDA PTR.TEXT, GET.PAST.SNAKE?
+               FIN
+            FIN
+         FIN
+         IFAT WITTS.END
+            LDA PTR.TEXT, HINT.WITTS?
+         FIN
+         IFAT PLOVER
+            OR
+         IFAT ALCOVE
+            OR
+         IFAT DARK
+            AND
+            NOT
+         BIT DARK, BEEN.HERE
+            LDA PTR.TEXT, HINT.PLOVER?
+         FIN
+         IFINRANGE HERE, MAZEA.42, MAZEA.BY.PIT
+            OR
+         IFINRANGE HERE, MAZED.107, MAZED.140
+            LDA PTR.TEXT, HINT.MAZE?
+         FIN
+         IFAT RESERVOIR
+            LDA PTR.TEXT, RESERVOIR.HINT?
+         FIN
+         IFNEAR SHADOW
+            LDA PTR.TEXT, SHADOW.HINT
+         FIN
+         IFEQ PTR.TEXT, 0
+            PROCEED
+         FIN
+         SET HINT.TIME, 0
+         QUERY PTR.TEXT
+            VALUE ILL.GIVE.HINT, HINT.COST
+            QUERY WANT.HINT?
+               ADD PTR.TEXT, 1
+               SAY PTR.TEXT
+               ADD PENALTIES, HINT.COST
+               BIC HERE, HINTABLE
+               BIC HERE, SMARTASS
+               SUB PTR.TEXT, 1
+               IFNEAR SNAKE
+                  IFIS PTR.TEXT, SNAKE.HINT.2?
+                     BIC HINTS, SNAKE.PENDING
+                  ELSE
+                     BIS HERE, HINTABLE
+                     BIS HINTS, SNAKE.PENDING
+                  FIN
+               FIN
+               IFAT PLOVER
+                  OR
+               IFAT ALCOVE
+                  OR
+               IFAT DARK
+                  BIC PLOVER, HINTABLE
+                  BIC DARK, HINTABLE
+                  BIC ALCOVE, HINTABLE
+               FIN
+               IFAT WITTS.END
+                  BIS HINTS, WITT.HELP
+               FIN
+               IFINRANGE HERE, MAZEA.42, MAZEA.BY.PIT
+                  ITERATE PTR.PLACE, MAZEA.42, MAZEA.BY.PIT
+                     BIC PTR.PLACE, HINTABLE
+                  EOI
+               FIN
+               IFINRANGE HERE, MAZED.107, MAZED.140
+                  ITERATE PTR.PLACE, MAZED.107, MAZED.140
+                     BIC PTR.PLACE, HINTABLE
+                  EOI
+               FIN
+               IFNEAR SHADOW
+                  BIC EAST.WINDOW, HINTABLE
+                  BIC WEST.WINDOW, HINTABLE
+               FIN
+            ELSE                   {Note that he refused our help}
+               CALL WISE.GUY
+            FIN
+         ELSE
+           CALL WISE.GUY
+         FIN
+PROC     NO.MOVE.POSSIBLE
+         CALL IS.IT.DARK?
+         IFEQ IV, IT.IS.NOT.DARK
+            IFKEY GO
+               SET PTR.TEMP, ARG2
+            ELSE
+               SET PTR.TEMP, ARG1
+            FIN
+            CHOOSE PTR.TEXT, NO.CAN.GO, OG.NAC.ON
+            QUIP PTR.TEXT, PTR.TEMP
+         FIN
+         CHANCE   25
+            AND
+         IFLT CLOSURE, IN.REPOSITORY
+            SAY CRUNCH
+            CALL CORONER
+         FIN
+         QUIP OOF!
+PROC     DWARF.ATTACK
+*
+*        This label handles knife attacks by dwarves.  It should be
+*        called with the variable FLEETFOOT set to the "survival asset" of
+*        whatever the adventurer was doing (0 for just attacked, 50
+*        or so for running, 25 for neither) to reflect the ease with
+*        which the dwarf can hit the dude.
+*
+         CALL IS.IT.DARK?
+         IFEQ IV, IT.IS.NOT.DARK
+            SET J, DWARF  {how many dwarves are here?}
+            ADD J, 2      {stretch the odds on knife-throwing a bit}
+            RANDOM J, J   {get # of knives, + 1}
+            SUB J, 1       {get # of knives thrown}
+            IFLT J, 1      {any actually thrown?}
+               PROCEED     {if not, just go back}
+            FIN
+            VALUE KNIVES.THROWN, J {tell him that he's under attack}
+            SET K, STRENGTH        {let's figure out how agile he is at}
+            SUB K, INVCT           {the moment....}
+            MULT K, 5              {5 points per object that he could carry...}
+            BIT DWARF, SPECIAL2    {is dwarf angry (more accurate) ? }
+               SUB K, 20           {if so, he's probably in trouble}
+            FIN
+            ADD FLEETFOOT, K     {add in the "fleet-foot" compensating factor}
+            ADD FLEETFOOT, 35    {give him some chance even if he's loaded down}
+            DIVIDE FLEETFOOT, J  {chances are poor if > 1 knife thrown!}
+            CHANCE   FLEETFOOT      {ok - Did they all miss him?}
+               OR
+            BIT DWARF, SPECIAL1     {is this the first attack recently?}
+               VALUE KNIVES.MISS, J {he's safe this time - whew!}
+               BIC DWARF, SPECIAL1 {clear "first attack" flag}
+            ELSE     {oh-oh - he's been stabbed!}
+               VALUE KNIVES.GOT.YOU, J {tell him the bad news}
+               CALL CORONER     {go clean up the bloody mess on the floor}
+            FIN
+         FIN
+PROC     WEAPONRY    {Handle attacks with weapons}
+         IFHAVE ARG2
+            IFKEY THROW
+               DROP ARG2
+            FIN
+            IFNEAR DWARF
+               SET IV, STRENGTH
+               SUB IV, INVCT
+               MULT IV, 5
+               SET J, DWARF
+               ADD J, 2
+               MULT J, 15
+               ADD IV, J
+               IFKEY AXE
+                  OR
+               IFKEY SWING
+                  IFKEY AXE
+                     AND
+                  IFKEY SWING
+                  ELSE
+                     ADD IV, 15
+                  FIN
+               FIN
+               CHANCE   IV
+                  CHANCE   5
+                     AND
+                     NOT
+                  BIT ADMIN, QUIPPED
+                     SAY DWARF.QUIP, ARG2
+                     BIS ADMIN, QUIPPED
+                   ELSE
+                     SAY DWARF.POOF
+                  FIN
+                  SET P, 1
+                  CALL KILL.SOME.DWARVES
+                  IFGT DWARF, 0
+                     SET FLEETFOOT, 0
+                     SET BACKLASH, 100
+                  FIN
+               ELSE
+                  SAY DWARF.DODGES
+                  SET FLEETFOOT, 0   {low "fleet foot" factor}
+                  SET BACKLASH, 100     {dwarves will probably fight back}
+               FIN
+            ELSE
+               IFNEAR SNAKE
+                  IFKEY THROW
+                     GET ARG2
+                  FIN
+                  QUIP CANT.KILL.SNAKE
+               FIN
+               IFNEAR DRAGON
+                  QUIP NO.KILL.DRAGON, ARG2
+               FIN
+               IFNEAR BEAR
+                  IFEQ BEAR, CHAINED.FEROCIOUS
+                     IFKEY THROW
+                        IFKEY AXE
+                           SET AXE, BY.BEAR
+                           QUIP AXE.NOW.BY.BEAR
+                        FIN
+#                         QUIP SWORD.MISSES
+                     FIN
+                     CHANCE   50
+                        QUIP BEAR.MISSES
+                     FIN
+                     SAY BEAR.GETS.YOU
+                     CALL CORONER
+                  FIN
+                  QUIP NO.KILL.BEAR, BEAR
+               FIN
+               IFNEAR TROLL
+                  QUIP TROLL.DATA
+               FIN
+#                IFNEAR OGRE
+#                   IFKEY SWING
+#                      SAY OGRE.CHOPS.YOU, ARG2
+#                      CALL CORONER
+#                   FIN
+#                   IFKEY AXE
+#                      SAY OGRE.HALVES.YOU, ARG2
+#                      CALL CORONER
+#                   FIN
+#                   BIC GLASSY, HINTABLE
+#                   APPORT OGRE, YLEM
+#                   DROP SWORD
+#                   SET NEXT.VISION, RING.VISION
+#                   BIC GLASSY, NO.DWARF {can allow dwarves now}
+#                   QUIP OGRE.KILLED
+#                FIN
+#                IFNEAR BLOB
+#                   QUIP SLICE.BLOB, ARG2
+#                FIN
+#                IFNEAR BASILISK
+#                   IFGT BASILISK, TWITCHING
+#                      IFKEY THROW
+#                         GET ARG2
+#                      FIN
+#                      QUIP IT.IS.DEAD
+#                   FIN
+#                   SAY AXE.BASILISK, ARG2
+#                   CALL CORONER
+#                FIN
+#                IFNEAR DJINN
+#                   QUIP REBOUND, ARG2
+#                FIN
+#                IFNEAR GOBLINS
+#                   SAY KILL.A.FEW, ARG2
+#                   CALL CORONER
+#                FIN
+#                IFNEAR GIANT
+#                   SAY ENRAGED.GIANT, ARG2
+#                   CALL CORONER
+#                FIN
+               IFKEY THROW {Must go through}
+                  GET ARG2 {"thrower" logic}
+                  PROCEED  {in UPCHUCK     }
+               FIN
+               SAY YOU.DO, ARG1
+               QUIP IT.IS, ARG2
+            FIN
+         ELSE
+            QUIP YOU.DONT.HAVE, ARG2
+         FIN
+         QUIT
+PROC     PRESAY
+         IFGT STATUS, 1
+            SAY SAID, ARG2
+         FIN
+*PROC     PLUNGE   {for plunging into a bottomless pit}
+*         GOTO YLEM
+*         IFEQ LAMP, SWITCHED.ON
+*            SET LAMPLIFE, 0
+*           IFHAVE LAMP
+*               SAY FALL.&.STARVE
+*            ELSE
+*               SAY FALL.&.STARVED
+*            FIN
+*         ELSE
+*            SAY FALL.&.STARVED
+*         FIN
+*         CALL CORONER
+PROC     UPCHUCK
+         IFKEY BIRD     {Just drop it}
+            OR
+         IFKEY BEAR     {You can't throw bear into chasm!}
+            PROCEED
+         FIN
+         SET PTR.TEXT, 0
+         IFAT PIT
+            LDA PTR.TEXT, THROW.PIT
+            LDA PTR.PLACE, MISTS
+         FIN
+         IFAT EAST.OF.FISSURE
+            LDA PTR.TEXT, THROW.FISSURE
+            LDA PTR.PLACE, CAVERN
+         FIN
+         IFAT WEST.OF.FISSURE
+            LDA PTR.TEXT, THROW.FISSURE
+            LDA PTR.PLACE, CAVERN
+         FIN
+         IFAT WEST.PIT.END
+            LDA PTR.TEXT, THROW.PIT
+            LDA PTR.PLACE, WEST.PIT
+         FIN
+         IFAT EAST.PIT.END
+            LDA PTR.TEXT, THROW.PIT
+            LDA PTR.PLACE, EAST.PIT
+         FIN
+         IFAT LOW.N/S.PASSAGE
+            LDA PTR.TEXT, THROW.HOLE
+            LDA PTR.PLACE, DIRTY
+         FIN
+         IFAT EAST.WINDOW
+            LDA PTR.TEXT, THROW.PIT
+            LDA PTR.PLACE, MIRROR.CANYON
+         FIN
+         IFAT WEST.WINDOW
+            LDA PTR.TEXT, THROW.PIT
+            LDA PTR.PLACE, MIRROR.CANYON
+         FIN
+         IFAT BRINK
+            LDA PTR.TEXT, THROW.PIT
+            LDA PTR.PLACE, STREAMPIT
+         FIN
+         IFAT DUSTY
+            LDA PTR.TEXT, THROW.HOLE
+            LDA PTR.PLACE, COMPLEX
+         FIN
+         IFAT MAZEA.BY.PIT
+            LDA PTR.TEXT, THROW.PIT
+            LDA PTR.PLACE, BIRD.CHAMBER
+         FIN
+         IFAT SECRET.N/S.CANYON.1
+            LDA PTR.TEXT, THROW.ROOM
+            LDA PTR.PLACE, SLAB
+         FIN
+         IFAT SECRET.N/S.CANYON.2
+            LDA PTR.TEXT, THROW.ROOM
+            LDA PTR.PLACE, BEDQUILT
+         FIN
+         IFAT SECRET.E/W.CANYON
+            LDA PTR.TEXT, THROW.CANYON
+            LDA PTR.PLACE, WIDE.N/S.CANYON
+         FIN
+         IFAT INCLINE
+            LDA PTR.TEXT, THROW.ROOM
+            LDA PTR.PLACE, LOW
+         FIN
+         IFAT CAVERN
+            LDA PTR.TEXT, THROW.WHIRLPOOL
+            LDA PTR.PLACE, YLEM
+         FIN
+         IFAT MISTY
+            LDA PTR.TEXT, THROW.CAVERN
+            LDA PTR.PLACE, CAVERN
+         FIN
+         IFAT TOP.OF.STALACTITE
+            LDA PTR.TEXT, THROW.ROOM
+            LDA PTR.PLACE, MAZEA.53
+         FIN
+         IFAT RESERVOIR
+            LDA PTR.TEXT, THROW.RESERVOIR
+            LDA PTR.PLACE, YLEM
+         FIN
+         IFAT SW.OF.CHASM
+            LDA PTR.TEXT, THROW.CHASM
+            LDA PTR.PLACE, YLEM
+         FIN
+         IFAT NE.OF.CHASM
+            LDA PTR.TEXT, THROW.CHASM
+            LDA PTR.PLACE, YLEM
+         FIN
+         IFAT BREATHTAKER
+            LDA PTR.TEXT, THROW.GORGE
+            LDA PTR.PLACE, YLEM
+         FIN
+         IFAT MISTS
+            LDA PTR.TEXT, UP.THE.DOME
+            BIT ARG2, PLURAL
+               ADD PTR.TEXT, 1  {Wasteful, but avoids complications}
+            FIN
+            LDA PTR.PLACE, PIT
+         FIN
+         IFEQ PTR.TEXT, 0   {"TRANSIT" bit set but can't find target}
+            PROCEED
+         FIN
+         IFKEY VASE
+            APPORT VASE, YLEM
+            APPORT POTTERY, PTR.PLACE
+            IFLOC POTTERY, YLEM
+            ELSE
+               QUIP SHATTERED.IT
+            FIN
+         FIN
+         IFAT MISTS
+            IFKEY NUGGET
+               SET NUGGET.ROOM, 1    {Make steps permanently absent,...}
+               SET SNAKE, 1          {... but give the sucker a chance!}
+               QUIP NO.FOOL.STEPS
+            FIN
+         FIN
+         IFKEY BOTTLE
+            IFEQ BOTTLE, FULL.OF.WATER
+               OR
+            IFEQ BOTTLE, FULL.OF.OIL
+               BIS PTR.PLACE, DAMP
+            FIN
+         FIN
+         IFKEY OIL
+            OR
+         IFKEY WATER
+            SET J, FULL.OF.WATER
+            IFKEY OIL
+               SET J, FULL.OF.OIL
+            FIN
+            IFHAVE BOTTLE, J
+               SET BOTTLE, EMPTIED
+            FIN
+         FIN
+         IFKEY CAGE
+            AND
+         IFHAVE BIRD
+            APPORT BIRD, PTR.PLACE
+            IFLOC BIRD, YLEM
+            ELSE
+               IFAT MISTS
+                  SET J, 1          {Throwing up}
+               ELSE
+                  SET J, 0          {Throwing down}
+                  SAY BLANK
+               FIN
+               SAY INDIGNANT.BIRD, J
+            FIN
+            QUIT
+         FIN
+         IFKEY LAMP
+            AND
+         IFEQ LAMP, SWITCHED.ON
+            CALL IS.IT.DARK?                {Sets IV!}
+            IFGT IV, IT.IS.NOT.DARK         {it is now!}
+               QUIP IT.IS.NOW.DARK
+            FIN
+         FIN
+         IFAT MISTS
+            SAY BLANK
+         FIN
+         QUIT
+PROC     GROPE.FOR.IT   {grope around in the dark for objects}
+         IFEQ STATUS, 1 {did he say what to get?}
+            QUIP CANT.SEE.ANYTHING
+         FIN
+         BIT ARG2, OBJECT
+            IFHAVE ARG2
+               OR
+               NOT
+            BIT ARG2, PORTABLE
+               PROCEED
+            FIN
+            SET IV, INVCT
+            SUB IV, STRENGTH
+            MULT IV, 5
+            ADD IV, 60
+            CHANCE   IV
+               SAY GROPE.FALL, ARG2
+               CALL CORONER
+            FIN
+            QUIP GROPE.MISS, ARG2
+         FIN
+PROC     SHADOW.SHUTUP
+         BIT SHADOW, SPECIAL2    {shadow about to wave?}
+            BIS SHADOW, SPECIAL1 {postpone the act}
+            BIC SHADOW, SPECIAL2
+         FIN
+PROC     FOO.TO.YOU.TOO
+         IFGT FOOBAR, -1
+            SAY CANT.YOU.READ?
+         ELSE
+            SAY NOTHING
+         FIN
+         SET FOOBAR, 0
+PROC     PICKUP
+         BIT ARG2, WEARABLE
+            EVAL J, ARG2
+            IFGT J, NOT.WORN
+               DEPOSIT ARG2, NOT.WORN
+#                IFIS ARG2, RING
+#                ELSE
+                  BIC ARG2, FREEBIE
+#                FIN
+            FIN
+         FIN
+         BIT ARG2, UNSTABLE
+            EVAL J, ARG2
+            IFEQ J, 0
+               IFIS ARG2, BOTTLE
+                  SET BOTTLE, EMPTIED
+               ELSE
+                  DEPOSIT ARG2, 1
+               FIN
+            FIN
+         FIN
+PROC     FOLLOW.IT
+         IFEQ NEXT.ONE, THERE
+            MOVE LAST.ONE
+         FIN
+         IFEQ LAST.ONE, THERE
+            MOVE NEXT.ONE
+         FIN
+         QUIP NEED.A.DIRECTION
+PROC     PLAY.TUNE
+         BIT FISSURE, SPECIAL1
+            SAY MORE.TUNES
+         ELSE
+            SAY IT.PLAYS.A.TUNE!
+            BIS FISSURE, SPECIAL1
+         FIN
+PROC     LOOK.BRIDGE
+         IFNEAR FISSURE
+            QUIP DELICATE.STRUCTURE
+         FIN
+         IFNEAR VOLCANO
+            QUIP FRAGILE.ARCH
+         FIN
+         IFNEAR CHASM
+            IFEQ CHASM, 0
+               QUIP RICKETY.AFFAIR
+            FIN
+            QUIP BRIDGE.IS.GONE
+         FIN
+PROC     KEEP.TALKING
+         ITERATE IV, J, K         {Purely numerical iteration!}
+            SAY IV
+            IFLT IV, K
+               QUERY MORE?
+               ELSE
+                  PROCEED
+               FIN
+            FIN
+         EOI
+PROC     WATER.BEANSTALK
+         LDA PTR.TEXT, PLANT..WATER
+         ADD PTR.TEXT, PLANT
+         SAY PTR.TEXT
+         ADD PLANT, 1
+         IFGT PLANT, GIGANTIC
+            SET PLANT, STUNTED
+            BIS PLANT2, FEATURE
+         ELSE
+            BIC PLANT2, FEATURE
+         FIN
+         SAY BLANK
+         SAY PLANT
+         SET PLANT2, PLANT
+PROC     FAKE.NOTE
+         IFKEY NOTICE
+            OR
+         IFKEY NOTE
+            IFKEY LOOK
+               OR
+            IFKEY READ
+               QUIP SAME.AS.BEFORE
+            FIN
+            QUIP HAH!
+         FIN
+PROC     FAKE.WINDOW
+         IFKEY OUT
+            QUIP CLIMBING.OUT.RISKY
+         FIN
+         IFKEY WINDOW
+         ELSE
+            PROCEED
+         FIN
+         IFKEY LOOK
+            QUIP ITS.A.WINDOW
+         FIN
+         IFKEY RUB
+            OR
+         IFKEY BREAK
+            OR
+         IFKEY OPEN
+            OR
+         IFKEY CLOSE
+            QUIP NO.GLASS, ARG1
+         FIN
+         QUIP HAH!
+PROC     FAKE.SLAB
+         IFKEY SLAB
+            IFKEY LOOK
+               QUIP SLAB.INFO
+            FIN
+            QUIP HAH!
+         FIN
+PROC     FAKE.STEPS
+         IFKEY STEPS
+            QUIP JUST.A.FIXTURE, STEPS
+         FIN
+PROC     AM.I.CONFUSED?
+#          IFEQ CLOSURE, MIRROR.WORLD
+#             BIT CLOSURE, CONFUSION
+#                SAY CONFUSED.AGAIN
+#             ELSE
+#                BIS CLOSURE, CONFUSION
+#                SAY SOMETHING.STRANGE
+#             FIN
+#             MOVE LAST.ONE
+#          FIN
+         MOVE NEXT.ONE
+PROC     OPEN.BIVALVE
+         NEAR ARG2
+            IFHAVE ARG2
+               QUIP DROP.THE.BIVALVE, ARG2
+            FIN
+            IFHAVE TRIDENT
+               IFKEY CLAM
+                  APPORT CLAM, YLEM
+                  APPORT OYSTER, HERE
+                  APPORT PEARL, CULDESAC
+                  QUIP CLAM.OPENED
+               FIN
+               QUIP OYSTER.OPENED
+            FIN
+            QUIP NO.OPEN.BIVALVE, ARG2
+PROC     CHECK.ALL
+         IFKEY GET
+            OR
+         IFKEY DROP
+            PROCEED
+         FIN
+         LDA J, ALL
+         IFEQ J, ARG1
+            QUIP FANCY.THAT
+         FIN
+         IFKEY RIGHT          {ALL RIGHT - all right?}
+            QUIP GOOD
+         FIN
+         SAY BAD.ALL.1, ARG1
+         QUIP BAD.ALL.2, ARG2
+PROC     DISPOSE.OIL
+         IFHAVE BOTTLE, FULL.OF.OIL
+               SET BOTTLE, EMPTIED
+         ELSE
+            QUIP YOU.DONT.HAVE, OIL
+         FIN
+PROC     OLORIN.CHECK
+         IFINRANGE ARG1, FIRST.WIZ, LAST.WIZ
+            LDA IV, FIRST.WIZ
+            ADD IV, 1
+            ADD IV, MAGICK
+            IFEQ IV, ARG1
+               ADD IV, 1
+               IFIS IV, LAST.WIZ
+                  SET MAGICK, 0
+                  BIS ADMIN, OLORIN
+                  QUIP PARDON?
+               FIN
+               ADD MAGICK, 1
+            ELSE
+               SET MAGICK, 0
+            FIN
+            SET ARG1, BADWORD     { Fake it! }
+         ELSE
+            IFGT MAGICK, 0
+               SET MAGICK, 0
+            FIN
+         FIN

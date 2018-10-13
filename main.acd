@@ -1,0 +1,1115 @@
+*        Time to do some run-time initialisation.
+*
+INIT
+         SAY BLANK
+*
+*        Initialize portability of some objects.
+*
+         BIS KEYS, PORTABLE
+         BIS LAMP, PORTABLE
+         BIS CAGE, PORTABLE
+         BIS ROD, PORTABLE
+         BIS DYNAMITE, PORTABLE
+         BIS BIRD, PORTABLE
+         BIS PILLOW, PORTABLE
+         BIS CLAM, PORTABLE
+         BIS OYSTER, PORTABLE
+         BIS MAGAZINES, PORTABLE
+         BIS KNIFE, PORTABLE       {Not really, since it does not exist!}
+         BIS FOOD, PORTABLE
+         BIS BOTTLE, PORTABLE
+         BIS AXE, PORTABLE
+         BIS BEAR, PORTABLE
+         BIS BATTERIES, PORTABLE
+         BIS NUGGET, PORTABLE
+         BIS DIAMONDS, PORTABLE
+         BIS BARS, PORTABLE
+         BIS JEWELRY, PORTABLE
+         BIS COINS, PORTABLE
+         BIS CHEST, PORTABLE
+         BIS NEST, PORTABLE
+         BIS TRIDENT, PORTABLE
+         BIS VASE, PORTABLE
+         BIS POTTERY, PORTABLE
+         BIS EMERALD, PORTABLE
+         BIS PYRAMID, PORTABLE
+         BIS PEARL, PORTABLE
+         BIS RUG, PORTABLE
+         BIS SPICES, PORTABLE
+         BIS CHAIN, PORTABLE
+         BIS HELMET, PORTABLE
+         BIS SAPPHIRE, PORTABLE
+         BIS DRACHMA, PORTABLE
+*
+*        Set FREEBIE objects.
+*
+         BIS BIRD, FREEBIE
+         BIS BEAR, FREEBIE
+         BIS DRACHMA, FREEBIE
+         BIS PEARL, FREEBIE
+*
+*        Specify which rooms are self-lit (lamp not needed).
+*
+         BIS ROAD, LIT
+         BIS HILL, LIT
+         BIS FOREST.1, LIT
+         BIS FOREST.2, LIT
+         BIS BUILDING, LIT
+         BIS VALLEY, LIT
+         BIS SLIT, LIT
+         BIS DEPRESSION, LIT
+         BIS IN.CAVE, LIT
+         BIS COBBLES, LIT
+         BIS PLOVER, LIT
+         BIS BREATHTAKER, LIT
+         BIS NE.REPOSITORY, LIT
+         BIS SW.REPOSITORY, LIT
+*
+*        Set dwarf-inhibits for appropriate places.
+*
+         BIS IN.CAVE, NO.DWARF
+         BIS COBBLES, NO.DWARF
+         BIS ALCOVE, NO.DWARF
+         BIS SW.OF.CHASM, NO.DWARF
+         BIS NE.OF.CHASM, NO.DWARF
+         BIS CORRIDOR, NO.DWARF
+         BIS PLOVER, NO.DWARF
+         BIS DARK, NO.DWARF
+         BIS FORK, NO.DWARF
+         BIS WARMJUNCTN, NO.DWARF
+         BIS BREATHTAKER, NO.DWARF
+         BIS BOULDERS, NO.DWARF
+         BIS LIMESTONE, NO.DWARF
+         BIS BARREN, NO.DWARF
+         BIS BEAR.ROOM, NO.DWARF
+         BIS MAZEA.114, NO.DWARF
+         BIS EAST.PIT, NO.DWARF
+         BIS WEST.PIT, NO.DWARF
+         BIS LIMBO, NO.DWARF
+         BIS YLEM, NO.DWARF
+         BIS DEBRIS, NO.DWARF
+         BIS CANYON, NO.DWARF
+         BIS BIRD.CHAMBER, NO.DWARF
+         BIS PIT, NO.DWARF
+*
+*        Specify which places aren't in the cave.
+*
+         BIS ROAD, NOT.IN.CAVE
+         BIS HILL, NOT.IN.CAVE
+         BIS FOREST.1, NOT.IN.CAVE
+         BIS FOREST.2, NOT.IN.CAVE
+         BIS BUILDING, NOT.IN.CAVE
+         BIS VALLEY, NOT.IN.CAVE
+         BIS SLIT, NOT.IN.CAVE
+         BIS DEPRESSION, NOT.IN.CAVE
+*
+* Most of the rooms in the mazes are NO.BACK-type places to give
+* the adventurer heartburn and a possible ulcer.  The two rooms that
+* are at the very entrances of their respective mazes (MAZEA.42 and
+* MAZED.107) are not NO.BACK-types, so that if you accidentally
+* wander into the mazes you can escape quickly by saying "GO BACK".
+* You still can't use "BACK" when in these rooms if you got there
+* from another room in the maze, because the room you came from
+* has the "NO.BACK" bit set.
+*
+         BIS MAZEA.43, NO.BACK
+         BIS MAZEA.44, NO.BACK
+         BIS MAZEA.45, NO.BACK
+         BIS MAZEA.46, NO.BACK
+         BIS MAZEA.47, NO.BACK
+         BIS MAZEA.48, NO.BACK
+         BIS MAZEA.49, NO.BACK
+         BIS MAZEA.50, NO.BACK
+         BIS MAZEA.51, NO.BACK
+         BIS MAZEA.52, NO.BACK
+         BIS MAZEA.53, NO.BACK
+         BIS MAZEA.54, NO.BACK
+         BIS MAZEA.55, NO.BACK
+         BIS MAZEA.56, NO.BACK
+         BIS MAZEA.BY.PIT, NO.BACK
+         BIS MAZEA.58, NO.BACK
+         BIS MAZEA.80, NO.BACK
+         BIS MAZEA.81, NO.BACK
+         BIS MAZEA.82, NO.BACK
+         BIS MAZEA.83, NO.BACK
+         BIS MAZEA.84, NO.BACK
+         BIS MAZEA.85, NO.BACK
+         BIS MAZEA.86, NO.BACK
+         BIS MAZEA.87, NO.BACK
+         BIS MAZED.112, NO.BACK
+         BIS MAZEA.114, NO.BACK
+         BIS MAZED.131, NO.BACK
+         BIS MAZED.132, NO.BACK
+         BIS MAZED.133, NO.BACK
+         BIS MAZED.134, NO.BACK
+         BIS MAZED.135, NO.BACK
+         BIS MAZED.136, NO.BACK
+         BIS MAZED.137, NO.BACK
+         BIS MAZED.138, NO.BACK
+         BIS MAZED.139, NO.BACK
+         BIS MAZED.140, NO.BACK
+         BIS SHELL, NO.BACK
+         BIS INCLINE, NO.BACK
+         BIS TOP.OF.STALACTITE, NO.BACK
+         BIS SW.OF.CHASM, NO.BACK
+         BIS NE.OF.CHASM, NO.BACK
+         BIS WITTS.END, NO.BACK
+         BIS ALCOVE, NO.BACK
+         BIS PLOVER, NO.BACK
+         BIS DARK, NO.BACK
+         BIS WIDE.N/S.CANYON, NO.BACK
+         BIS JUMBLE, NO.BACK
+*
+*        Set in-maze bits.
+*
+         BIS MAZEA.42, IN.MAZE
+         BIS MAZEA.43, IN.MAZE
+         BIS MAZEA.44, IN.MAZE
+         BIS MAZEA.45, IN.MAZE
+         BIS MAZEA.46, IN.MAZE
+         BIS MAZEA.47, IN.MAZE
+         BIS MAZEA.48, IN.MAZE
+         BIS MAZEA.49, IN.MAZE
+         BIS MAZEA.50, IN.MAZE
+         BIS MAZEA.51, IN.MAZE
+         BIS MAZEA.52, IN.MAZE
+         BIS MAZEA.53, IN.MAZE
+         BIS MAZEA.54, IN.MAZE
+         BIS MAZEA.55, IN.MAZE
+         BIS MAZEA.56, IN.MAZE
+         BIS MAZEA.BY.PIT, IN.MAZE
+         BIS MAZEA.58, IN.MAZE
+         BIS MAZEA.80, IN.MAZE
+         BIS MAZEA.81, IN.MAZE
+         BIS MAZEA.82, IN.MAZE
+         BIS MAZEA.83, IN.MAZE
+         BIS MAZEA.84, IN.MAZE
+         BIS MAZEA.85, IN.MAZE
+         BIS MAZEA.86, IN.MAZE
+         BIS MAZEA.87, IN.MAZE
+         BIS MAZED.107, IN.MAZE
+         BIS MAZED.112, IN.MAZE
+         BIS MAZEA.114, IN.MAZE
+         BIS MAZED.131, IN.MAZE
+         BIS MAZED.132, IN.MAZE
+         BIS MAZED.133, IN.MAZE
+         BIS MAZED.134, IN.MAZE
+         BIS MAZED.135, IN.MAZE
+         BIS MAZED.136, IN.MAZE
+         BIS MAZED.137, IN.MAZE
+         BIS MAZED.138, IN.MAZE
+         BIS MAZED.139, IN.MAZE
+         BIS MAZED.140, IN.MAZE
+*
+*        Specify rooms with only 1 exit.
+*
+         BIS NUGGET.ROOM, ONE.EXIT
+         BIS EAST.WINDOW, ONE.EXIT
+         BIS WEST.WINDOW, ONE.EXIT
+         BIS MAZEA.46, ONE.EXIT
+         BIS MAZEA.47, ONE.EXIT
+         BIS MAZEA.48, ONE.EXIT
+         BIS MAZEA.49, ONE.EXIT
+         BIS MAZEA.54, ONE.EXIT
+         BIS MAZEA.56, ONE.EXIT
+         BIS MAZEA.58, ONE.EXIT
+         BIS DEAD.END.2, ONE.EXIT
+         BIS DEAD.END.3, ONE.EXIT
+         BIS MAZEA.81, ONE.EXIT
+         BIS MAZEA.82, ONE.EXIT
+         BIS MAZEA.85, ONE.EXIT
+         BIS MAZEA.86, ONE.EXIT
+         BIS CULDESAC, ONE.EXIT
+         BIS MAZED.140, ONE.EXIT
+*
+*        Specify openable objects.
+*
+         BIS GRATE, OPENABLE
+         BIS DOOR, OPENABLE
+         BIS CLAM, OPENABLE
+         BIS OYSTER, OPENABLE
+         BIS CHAIN, OPENABLE
+         BIS CHEST, OPENABLE
+         BIS CURTAINS, OPENABLE
+         BIS GATE, OPENABLE
+*
+*        Specify non-object objects.
+*
+         BIS OIL, FEATURE
+         BIS WATER, FEATURE
+         BIS STEPS, FEATURE
+         BIS CURTAINS, FEATURE
+         BIS FISSURE, FEATURE
+         BIS MIRROR, FEATURE
+         BIS SHADOW, FEATURE
+         BIS STALACTITES, FEATURE
+         BIS DRAWINGS, FEATURE
+         BIS PIRATE, FEATURE
+         BIS VOLCANO, FEATURE
+#          BIS QUICKSAND, FEATURE
+         BIS CARPET, FEATURE
+         BIS DWARF, FEATURE
+         BIS KNIFE, FEATURE
+         BIS PLANT2, FEATURE
+         BIS TREES, FEATURE
+         BIS BRIDGE, FEATURE
+         BIS GATE, FEATURE
+         BIS FISSURE, FEATURE
+*
+*        Set hint-exists bits.
+*
+         BIS MAZEA.42, HINTABLE
+         BIS MAZEA.43, HINTABLE
+         BIS MAZEA.44, HINTABLE
+         BIS MAZEA.45, HINTABLE
+         BIS MAZEA.46, HINTABLE
+         BIS MAZEA.47, HINTABLE
+         BIS MAZEA.48, HINTABLE
+         BIS MAZEA.49, HINTABLE
+         BIS MAZEA.50, HINTABLE
+         BIS MAZEA.51, HINTABLE
+         BIS MAZEA.52, HINTABLE
+         BIS MAZEA.53, HINTABLE
+         BIS MAZEA.54, HINTABLE
+         BIS MAZEA.55, HINTABLE
+         BIS MAZEA.56, HINTABLE
+         BIS MAZEA.BY.PIT, HINTABLE
+         BIS MAZEA.58, HINTABLE
+         BIS MAZEA.80, HINTABLE
+         BIS MAZEA.81, HINTABLE
+         BIS MAZEA.82, HINTABLE
+         BIS MAZEA.83, HINTABLE
+         BIS MAZEA.84, HINTABLE
+         BIS MAZEA.85, HINTABLE
+         BIS MAZEA.86, HINTABLE
+         BIS MAZEA.87, HINTABLE
+         BIS MAZED.107, HINTABLE
+         BIS MAZED.112, HINTABLE
+         BIS MAZEA.114, HINTABLE
+         BIS MAZED.131, HINTABLE
+         BIS MAZED.132, HINTABLE
+         BIS MAZED.133, HINTABLE
+         BIS MAZED.134, HINTABLE
+         BIS MAZED.135, HINTABLE
+         BIS MAZED.136, HINTABLE
+         BIS MAZED.137, HINTABLE
+         BIS MAZED.138, HINTABLE
+         BIS MAZED.139, HINTABLE
+         BIS MAZED.140, HINTABLE
+         BIS BIRD.CHAMBER, HINTABLE
+         BIS DEPRESSION, HINTABLE
+         BIS MTKING, HINTABLE
+         BIS EAST.WINDOW, HINTABLE
+         BIS WEST.WINDOW, HINTABLE
+         BIS WITTS.END, HINTABLE
+         BIS PLOVER, HINTABLE
+         BIS ALCOVE, HINTABLE
+         BIS DARK, HINTABLE
+         BIS RESERVOIR, HINTABLE
+         BIS BREATHTAKER, HINTABLE
+*
+*        Declare water-holes.
+*
+         BIS BUILDING, H20.HERE
+         BIS ROAD, H20.HERE
+         BIS VALLEY, H20.HERE
+         BIS SLIT, H20.HERE
+         BIS STREAMPIT, H20.HERE
+         BIS CAVERN, H20.HERE
+         BIS RESERVOIR, H20.HERE
+*
+*        Declare objects to be referred to in plural.
+*
+         BIS KEYS, PLURAL
+         BIS COINS, PLURAL
+         BIS MAGAZINES, PLURAL
+         BIS BATTERIES, PLURAL
+         BIS DIAMONDS, PLURAL
+         BIS SPICES, PLURAL
+*
+*        Indicate where throwing things sends them elsewhere.
+*
+         BIS PIT, TRANSIT
+         BIS EAST.OF.FISSURE, TRANSIT
+         BIS WEST.OF.FISSURE, TRANSIT
+         BIS WEST.PIT.END, TRANSIT
+         BIS EAST.PIT.END, TRANSIT
+         BIS LOW.N/S.PASSAGE, TRANSIT
+         BIS EAST.WINDOW, TRANSIT
+         BIS WEST.WINDOW, TRANSIT
+         BIS BRINK, TRANSIT
+         BIS DUSTY, TRANSIT
+         BIS MAZEA.BY.PIT, TRANSIT
+         BIS SECRET.N/S.CANYON.1, TRANSIT
+         BIS SECRET.N/S.CANYON.2, TRANSIT
+         BIS SECRET.E/W.CANYON, TRANSIT
+         BIS INCLINE, TRANSIT
+         BIS CAVERN, TRANSIT
+         BIS MISTY, TRANSIT
+         BIS RESERVOIR, TRANSIT
+         BIS TOP.OF.STALACTITE, TRANSIT
+         BIS SW.OF.CHASM, TRANSIT
+         BIS NE.OF.CHASM, TRANSIT
+         BIS BREATHTAKER, TRANSIT
+         BIS MISTS, TRANSIT
+*
+*        Declare the treasures.
+*        Note that the tusk starts off as a non-treasure (snigger!).
+*
+         BIS NUGGET, VALUED
+         BIS DIAMONDS, VALUED
+         BIS BARS, VALUED
+         BIS JEWELRY, VALUED
+         BIS COINS, VALUED
+         BIS CHEST, VALUED
+         BIS NEST, VALUED
+         BIS TRIDENT, VALUED
+         BIS VASE, VALUED
+         BIS EMERALD, VALUED
+         BIS PYRAMID, VALUED
+         BIS PEARL, VALUED
+         BIS RUG, VALUED
+         BIS SPICES, VALUED
+         BIS CHAIN, VALUED
+         BIS HELMET, VALUED
+         BIS SAPPHIRE, VALUED
+*
+*        Declare unstable objects.
+*
+         BIS CHEST, UNSTABLE
+         BIS CAGE, UNSTABLE
+         BIS BOTTLE, UNSTABLE
+         BIS BATTERIES, UNSTABLE
+         BIS DRACHMA, UNSTABLE
+*
+*        Declare mortal (killable) things.
+*
+         BIS TROLL, MORTAL
+         BIS DWARF, MORTAL
+         BIS DRAGON, MORTAL
+         BIS SNAKE, MORTAL
+         BIS BEAR, MORTAL
+         BIS CLAM, MORTAL
+         BIS OYSTER, MORTAL
+         BIS BIRD, MORTAL
+*
+*        Mark wearable objects.
+*
+         BIS JEWELS, WEARABLE
+         BIS HELMET, WEARABLE
+*
+*        Mark bulky objects. The first lot is only declared as big
+*        so that dwarves do not nick any of it.
+*
+         BIS BEAR, BIG
+         BIS CHAIN, BIG
+         BIS BIRD, BIG
+*
+*        Now for genuinly large objects.
+*
+         BIS CLAM, BIG
+         BIS OYSTER, BIG
+         BIS CAGE, BIG
+         BIS PILLOW, BIG
+         BIS CHEST, BIG
+         BIS NEST, BIG
+         BIS TRIDENT, BIG
+         BIS VASE, BIG
+         BIS RUG, BIG
+         BIS HELMET, BIG
+*
+*
+         LDA HERE, LIMBO {Fixes lack of initialisation diagnosed by Jon Skeet}
+*
+*        Move objects to their starting places.
+*
+         ITOBJ PTR.OBJ
+            APPORT PTR.OBJ, LIMBO
+            RANDOM J, 100     {Kick random number generator}
+         EOI
+         APPORT KEYS, BUILDING
+         APPORT LAMP, BUILDING
+         APPORT GRATE, DEPRESSION
+         APPORT CAGE, COBBLES
+         APPORT ROD, DEBRIS
+         APPORT STEPS, PIT
+         APPORT BIRD, BIRD.CHAMBER
+         APPORT DOOR, IMMENSE.N/S.PASSAGES
+         APPORT PILLOW, SOFT
+         APPORT SNAKE, MTKING
+         APPORT FISSURE, EAST.OF.FISSURE
+         APPORT CLAM, SHELL
+         APPORT MAGAZINES, WITTS.END
+         APPORT FOOD, BUILDING
+         APPORT BOTTLE, BUILDING
+         SET    BOTTLE, FULL.OF.WATER
+         APPORT PLANT, WEST.PIT
+         APPORT PLANT2, WEST.PIT.END
+         APPORT STALACTITES, TOP.OF.STALACTITE
+         APPORT SHADOW, EAST.WINDOW
+         APPORT DRAWINGS, ORIENTAL
+         APPORT DRAGON, SECRET.N/E.CANYON.1
+         APPORT CHASM, SW.OF.CHASM
+         APPORT TROLL, SW.OF.CHASM
+         APPORT BEAR, BEAR.ROOM
+         APPORT VOLCANO, BREATHTAKER
+         APPORT MACHINE, MAZED.140
+         APPORT CARPET, SOFT
+         APPORT NUGGET, NUGGET.ROOM
+         APPORT DIAMONDS, WEST.OF.FISSURE
+         APPORT BARS, LOW.N/S.PASSAGE
+         APPORT JEWELRY, SOUTH.SIDE.CHAMBER
+         APPORT COINS, WEST.SIDE.CHAMBER
+         APPORT NEST, GIANT.ROOM
+         APPORT TRIDENT, CAVERN
+         APPORT VASE, ORIENTAL
+         APPORT EMERALD, PLOVER
+         APPORT PYRAMID, DARK
+         APPORT TABLET, DARK
+         APPORT SPICES, BOULDERS
+         APPORT CHAIN, BEAR.ROOM
+         APPORT GATE, HILL
+         APPORT OIL, EAST.PIT
+*
+*        Declare schizoid objects.
+*
+         BIS GRATE, SCHIZOID
+         BIS STEPS, SCHIZOID
+         BIS FISSURE, SCHIZOID
+         BIS PLANT2, SCHIZOID
+         BIS SHADOW, SCHIZOID
+         BIS DRAGON, SCHIZOID
+         BIS CHASM, SCHIZOID
+         BIS TROLL, SCHIZOID
+         BIS TROLL2, SCHIZOID
+#          BIS QUICKSAND, SCHIZOID
+         BIS GORGE, SCHIZOID
+*
+*        Wake up user and greet him.
+*
+         SET BACKLASH, 35     {normal "dwarves not vengeful"}
+         SET FLEETFOOT, 25    {not running but didn't just attack}
+         BIS STATUS, QUICKIE  {default output mode}
+         SET ESCAPE, 0
+         LDA OK, OK!
+         CHOOSE CLOCK, 15, 25
+         CHOOSE LAMPLIFE, 440, 460
+         CHOOSE DWARFCOUNT, 4, 8
+         CHANCE 75
+            BIS ADMIN, CAMEO.TRIED       {no cameo in this game}
+         FIN
+         SET CHAIN, LOCKED
+         SET INVCT, 0
+         SET STRENGTH, 7
+         SAY HI.THERE
+         QUERY INSTRUCTIONS?
+            SAY INTRO
+*            QUERY INTERESTED?
+*               LDA J, EXPANSIONS.START
+*               LDA K, EXPANSIONS.END
+*               CALL KEEP.TALKING
+*            FIN
+         FIN
+         GOTO ROAD
+         SAY BLANK
+*
+*        And here, at long last, is the main program!
+*
+REPEAT
+         RANDOM   IV, 100    {kick the random number generator}
+#          BIT STATUS, JUGGLED
+#             AND
+#          IFAT CELLAR
+#             IFKEY DROP
+#                OR
+#             IFKEY THROW
+#                CALL WIZARD.EVICTS
+#             FIN
+#          FIN
+         CHANCE 3
+            AND
+         IFEQ CLOSURE, STILL.OPEN
+            AND
+         IFLT DWARFCOUNT, 10
+            CALL MAKE.A.DWARF
+         FIN
+         IFEQ CLOSURE, IN.REPOSITORY
+            CALL STOP.CHEATING    {Return fake object to where it belongs}
+         FIN
+         BIT STATUS, MOVED
+            ADD MOVES, 1
+            IFAT MTKING
+               SET SNAKE.EXIT, THERE
+            FIN
+            IFINRANGE HERE, FOREST.1, FOREST.2
+               APPORT TREES, HERE
+            FIN
+            IFGT DWARF, 0
+               BIT HERE, NOT.IN.CAVE
+                  OR
+               BIT HERE, NO.DWARF
+                  CHANCE 15
+                     SUB DWARF, 1       {make dwarves give up gradually}
+                     IFEQ DWARF, 0
+                        APPORT DWARF, LIMBO
+                     FIN
+                  FIN
+               ELSE
+                  IFLOC DWARF, HERE
+                     OR
+                  IFLOC DWARF, THERE
+                  ELSE
+                     SET DWARF, 0           {have shaken the buggars off}
+                     APPORT DWARF, LIMBO
+                  FIN
+               FIN
+            FIN
+            BIT PIRATE, SPECIAL1          {is he chasing us?}
+               AND
+            BIT HERE, NOT.IN.CAVE           {shake him off}
+               BIC PIRATE, SPECIAL1
+            FIN
+            BIT THERE, NOT.IN.CAVE
+               AND
+               NOT
+            BIT HERE, NOT.IN.CAVE
+               BIC PIRATE, SPECIAL1       {fooled him!}
+            FIN
+         FIN
+#          BIT ADMIN, TICKER
+#             CALL TICK
+#          FIN
+         BIT STATUS, MOVED
+#             IFNEAR STARSTONE
+#                AND
+#             IFGT STARSTONE, QUIESCENT
+#                IFLOC STARSTONE, HERE
+#                   SET STARSTONE, IRIDESCENT
+#                ELSE
+#                   SET STARSTONE, DARKENED
+#                FIN
+#             FIN
+            BIT THERE, ONE.EXIT
+               AND
+            IFLOC DWARF, THERE
+               AND
+               NOT
+            BIT ADMIN, OLORIN   {don't block wizards}
+               CHANCE 97         {let him through occasionally}
+                  GOTO THERE
+                  BIC STATUS, MOVED
+                  SAY DWARF.BLOCKS
+                  PROCEED
+               ELSE
+                  CALL SNEAKS.DIE
+               FIN
+            FIN
+         ELSE
+            IFNEAR DWARF
+               AND
+            CHANCE BACKLASH  {Is dwarf particularly vengeful?}
+               CALL DWARF.ATTACK
+            FIN
+            PROCEED
+         FIN
+#          IFNEAR FOG {must be done before clearing MOVED flag}
+#             CALL PHOG
+#          FIN
+         BIC STATUS, MOVED
+         CHOOSE FOOF, FOOF.FIRST, FOOF.LAST
+         CHANCE 1
+            LDA FOOF, FOOF.ODD
+         FIN
+         IFNEAR LAMP
+            IFEQ LAMP, SWITCHED.ON
+#                AND
+#                NOT
+#             IFAT PLAIN.2         {Don't let it run out in the fog!}
+               SUB LAMPLIFE, 1
+               IFEQ LAMPLIFE, 40
+                  OR
+               IFEQ LAMPLIFE, 0
+                  CALL LAMPREY
+               FIN
+            FIN
+         FIN
+#          IFNEAR OWL
+#             AND
+#          IFNEAR LAMP, SWITCHED.ON
+#             CALL OWL.FLIES.OFF
+#          FIN
+#          IFLOC GOBLINS, LIMBO {resting place}
+#             OR
+#          IFLOC GOBLINS, YLEM  {gone for good}
+#          ELSE
+#             APPORT GOBLINS, HERE
+#             IFGT GOBLINS, 0
+#                CALL IS.IT.DARK?
+#                IFEQ IV, IT.IS.NOT.DARK
+#                   SAY GOBLIN.CHASE
+#                FIN
+#             FIN
+#          FIN
+         BIT HERE, BEEN.HERE
+            AND
+         BIT STATUS, QUICKIE
+            OR
+         BIT STATUS, FASTMODE
+            SET J, 0   {list objects immediately after place description}
+         ELSE
+            BIS STATUS, FULLDISPLAY
+            SET J, 1   {stick blank line after place description}
+#             IFEQ GIANT, STILL.PICNICKING   {short picnic description}
+#                SET GIANT, PICNICKING       {long picnic description}
+#             FIN
+         FIN
+         CALL IS.IT.DARK?
+         IFEQ IV, IT.IS.NOT.DARK         {No? Goody!...}
+            SAY HERE
+            IFGT J, 0
+#                IFAT BASALT.SHELF
+#                   SAY ALIEN.VIEW
+#                ELSE
+                  IFAT PIT
+                     AND
+                  IFEQ MISTS, STEPS.PRESENT
+                     SAY ROUGH.STEPS
+                  FIN
+#                FIN
+            FIN
+            BIT HERE, DAMP
+               SAY GROUND.IS.DAMP
+            FIN
+            BIT HERE, BEEN.HERE
+               SET K, 2
+            ELSE
+               SET K, 3
+#                IFAT SWORD.PLACE
+#                   SAY ROCK.INSCRIPTION
+#                FIN
+            FIN
+            BIT HERE, NOT.IN.CAVE
+            ELSE
+               SUB CLOCK, K           {Tick the clock by 2 or 3}
+            FIN
+            BIS HERE, BEEN.HERE
+            IFLT DWARF, 1
+            ELSE
+               BIT HERE, NOT.IN.CAVE
+                  OR
+               BIT HERE, NO.DWARF
+               ELSE
+                  APPORT DWARF, HERE
+               FIN
+            FIN
+            CALL HERE.YOU.CAN.SEE
+#             IFNEAR DWARF
+#                AND
+#             IFEQ DWARF, 1
+#                AND
+#                NOT
+#             IFEQ SWAG.TO.DROP, 0
+#                AND
+#             CHANCE 67
+#                SAY BULGING.COAT
+#             FIN
+            IFHAVE BEAR
+               SAY BEAR.FOLLOWS
+            FIN
+            CHANCE 1        {Cameos are rare even in the 25%}
+               AND          {of the games in which they CAN occur}
+            CHANCE 5
+               AND
+            IFLT CLOSURE, IN.REPOSITORY
+               AND
+            IFGT TURNS, 150
+               AND
+               NOT
+            BIT  HERE, LIT
+               CALL DO.CAMEO
+            FIN
+         ELSE
+            BIT THERE, LIT
+            ELSE
+               IFLOC LAMP, THERE
+                  AND
+               IFEQ LAMP, SWITCHED.ON
+               ELSE
+#                   IFLOC STARSTONE, THERE
+#                      AND
+#                      NOT
+#                   IFEQ STARSTONE, QUIESCENT
+#                   ELSE
+                     IFHAVE PYRAMID
+                        OR
+                     CHANCE 25
+                        AND
+                        NOT
+                     BIT ADMIN, RANOUT
+                        AND
+                     IFLT CLOSURE, IN.REPOSITORY
+                        SAY CRUNCH
+                        CALL CORONER
+#                      FIN
+                  FIN
+               FIN
+            FIN
+            SAY IT.IS.NOW.DARK
+         FIN
+         BIC STATUS, FULLDISPLAY
+         BIC ADMIN, RANOUT      {clear "lamp just died"}
+         IFAT  Y2
+            CHANCE 35
+               SAY HOLLOW.VOICE
+            FIN
+         FIN
+#          CALL GOBLIN.CHECK
+         BIT HERE, NOT.IN.CAVE
+            OR
+         IFGT CLOSURE, EXITS.BARRED
+         ELSE
+            IFLT CLOCK, 1
+               CALL EVENTS
+            ELSE
+               BIC STATUS, TICKED
+#                SUB SWAG.TIME, 1
+#                IFEQ SWAG.TIME, 0
+#                   CHOOSE SWAG.TIME, 10, 20
+#                   CALL GET.SWAG
+#                FIN
+            FIN
+         FIN
+         IFNEAR DWARF
+            SET FLEETFOOT, 50 {added 1 to DWARF in the EVENTS routine}
+            CALL DWARF.ATTACK
+         FIN
+#          IFLOC LAMP, YLEM
+#             AND
+#          IFAT  ROAD
+#             AND
+#          IFLT CLOSURE, MIDDLE.OF.NOWHERE   {Lamp vanishes during end-game}
+#             SAY CALL.IT.A.DAY
+#             SET QUITTING, 1
+#             CALL FINIS
+#          FIN
+*
+REPEAT
+         BIT HERE, HINTABLE
+            ADD HINT.TIME, 1
+            IFGT HINT.TIME, 25
+               CALL HINT.LOGIC
+            FIN
+         ELSE
+            SET HINT.TIME, 0
+         FIN
+#          IFNEAR RATS
+#             ADD RATS, 1
+#             IFLT RATS, 6
+#                IFGT RATS, 1
+#                   LDA IV, RATS.HERE
+#                   ADD IV, RATS
+#                   SUB IV, 2
+#                   SAY IV
+#                FIN
+#             ELSE
+#                SAY RATS.FEAST
+#                GOTO SEA.VIEW
+#                IFHAVE FOOD
+#                   APPORT FOOD, LIMBO
+#                FIN
+#                SET RATS, 0
+#                CALL CORONER
+#             FIN
+#          FIN
+#          BIT HERE, IN.SEWER
+#             CALL PROD.TIDE
+#          FIN
+#          SUB GIANT.TIME, 1
+#          IFNEAR GIANT
+#             CALL GIANT.STUFF
+#          FIN
+#          IFGT GIANT, RESTING
+#             AND
+#          IFLT GIANT, PICNICKING
+#             AND
+#          IFLT GIANT.TIME, 1
+#             IFEQ GIANT, BLISSFUL
+#                SET GIANT, HURT
+#                BIC GIANT, SEEN
+#                CHOOSE GIANT.TIME, 4, 7
+#             ELSE
+#                BIT GIANT, SEEN
+#                   SET GIANT, RESTING
+#                FIN
+#             FIN
+#          FIN
+#          CALL MUTTER.STUFF
+#          IFAT PANTRY
+#             AND
+#             NOT
+#          BIT MOUSE, SEEN
+#             AND
+#          CHANCE 3
+#             CALL ALL.QUIET?
+#             IFEQ K, 0
+#                SAY TINY.MOUSE
+#                BIS MOUSE, SEEN
+#             FIN
+#          FIN
+#          SUB MOUSE.TIME, 1
+#          IFAT DUNGEON
+#             CALL DUNGEON.STUFF
+#          FIN
+         BIT STATUS, JUGGLED    {did we pick up/drop/move anything?}
+            BIC STATUS, JUGGLED
+            SET INVCT, 0
+            ITOBJ PTR.OBJ
+               IFHAVE PTR.OBJ
+                  AND
+                  NOT
+               BIT PTR.OBJ, FREEBIE
+                  ADD INVCT, 1
+               FIN
+            EOI
+         FIN
+#          CALL THIRST.FACTOR
+         SET FLEETFOOT, 25   {not running, didn't just attack}
+         SET BACKLASH, 35     {dwarves not vengeful}
+#          BIT CHALICE, SPECIAL1    {is chalice full?}
+#             BIT CHALICE, SPECIAL2
+#                BIC CHALICE, SPECIAL2      {Clear the 'just filled' flag}
+#             ELSE
+#                BIC CHALICE, SPECIAL1      {Empty it}
+#             FIN
+#          FIN
+         BIT SHADOW, SPECIAL2       {This rigmarole with two bits is}
+            IFNEAR SHADOW          {is required to avoid a variety of}
+               SAY FIGURE.WAVES    {unpleasant problems with clearing}
+            FIN                      {ARG1 on errors}
+            BIC SHADOW, SPECIAL2
+         FIN
+         BIT SHADOW, SPECIAL1
+            BIS SHADOW, SPECIAL2
+            BIC SHADOW, SPECIAL1
+         FIN
+#          BIT ADMIN, EDISON
+#             AND
+#             NOT
+#          IFKEY NOSIDE
+#             BIC ADMIN, EDISON
+#          FIN
+*
+         IFLT TURNS, MAX.GAME
+         ELSE
+            SAY WIZARD.ENDS
+            CALL FINIS
+         FIN
+#          BIC CROWN, SPECIAL1
+#          IFAT BREATHTAKER
+#             OR
+#          IFAT FACES
+#             OR
+#          IFAT WARMJUNCTN
+#             OR
+#          IFLT CROWN, ACTIVATED
+#             OR
+#          IFEQ STATUS, 0
+#             OR
+#          BIT STATUS, PLS.CLARIFY
+#          ELSE
+#             IFHAVE CROWN
+#                IFGT CROWN, ACTIVATED
+#                   LDA IV, VOICES
+#                   ADD IV, CROWN
+#                   SUB IV, ACTIVATED
+#                   SAY IV
+#                FIN
+#                IFLT CROWN, SPEAKING
+#                ELSE
+#                   BIS ORC.MUTTER, KEYS.MUTTER
+#                FIN
+#                BIS STATUS, TICKED
+#                CHANCE 40
+#                   OR
+#                IFGT CROWN, SPEAKING
+#                   OR
+#                IFEQ CROWN, ACTIVATED
+#                   AND
+#                   NOT
+#                IFEQ CROWN, INCOMPREHENSIBLE
+#                   OR
+#                IFKEY LISTEN
+#                   ADD CROWN, 1
+#                   IFGT CROWN, KILLING
+#                      CALL CORONER
+#                   FIN
+#                   BIS CROWN, SPECIAL1
+#                FIN
+#             ELSE
+#                IFGT CROWN DORMANT
+#                   IFLT CROWN, SPEAKING
+#                   ELSE
+#                      SAY VOICES
+#                   FIN
+#                   SET CROWN, DORMANT
+#                FIN
+#             FIN
+#          FIN
+         INPUT 
+         SUB FOOBAR, 1
+         ADD TURNS, 1
+         CALL OLORIN.CHECK
+         IFKEY SAVE
+            CALL SAVE
+            QUIT
+         FIN
+         IFEQ STATUS, 0
+            QUIT
+         FIN
+         IFEQ ARG1, BADWORD
+            OR
+         IFEQ ARG1, AMBIGWORD
+            IFEQ ARG1, BADWORD
+               CHOOSE J, NOCOMPRENDE, NOCOMPRENDE.OBJECT
+            ELSE
+               CHOOSE J, TELL.ME.MORE, MORE.ME.TELL
+            FIN
+            SAY J, ARG1
+            CALL SHADOW.SHUTUP
+            QUIT
+         FIN
+         IFKEY SAY
+            CALL PRESAY
+         FIN
+         IFKEY ALL
+            CALL CHECK.ALL
+         FIN
+         IFGT STATUS, 1
+            IFEQ ARG2, BADWORD
+               OR
+            IFEQ ARG2, AMBIGWORD
+               IFINRANGE ARG1, FIRST.SPECIAL, LAST.SPECIAL
+               ELSE
+                  IFEQ ARG2, AMBIGWORD
+                     SAY TELL.ME.MORE, ARG2
+                  ELSE
+                     CHOOSE J, NOCOMPRENDE.OBJECT, EDNERPMOCON
+                     SAY J, ARG2
+                  FIN
+                  CALL SHADOW.SHUTUP
+                  QUIT
+               FIN
+            FIN
+         FIN
+         IFKEY WEST
+            AND
+         IFKEY WALK
+            ADD WEST.COUNT, 1
+            IFEQ WEST.COUNT, 5
+               LDA J, WALK
+               IFEQ J, ARG1
+                  SAY WEST.WILL.DO, ARG1
+               ELSE
+                  SAY WEST.WILL.DO, ARG2
+               FIN
+            FIN
+         FIN
+#          IFEQ CLOSURE, MIRROR.WORLD
+#             CALL SWAP.DIRECTIONS
+#          FIN
+         IFKEY DOWN
+            AND
+         IFGT STATUS, 1
+            BIT ARG2, OBJECT
+               AND
+            BIT ARG2, PORTABLE
+               QUIP D.IS.FOR.DOWN
+            FIN
+         FIN
+#          IFGT STATUS, 1
+#             AND
+#          IFINRANGE ARG2, FIRST.SCULPTURE.FAKE, LAST.SCULPTURE.FAKE
+#             CALL SCULPTURE.STUFF
+#          FIN
+         IFKEY SAY          {Must avoid SHOUT JUMP and suchlike at WINDOW}
+            AND             {and other places; we do this by only doing}
+         IFGT STATUS, 1     {AT processing if verb is not SAY or the word}
+            AND             {said is magic}
+            NOT
+         IFINRANGE ARG2, FIRST.MAGIC, LAST.MAGIC
+         ELSE
+            CALL HERE
+         FIN
+#          IFEQ CLOSURE, MIRROR.WORLD
+#             CALL SWAP.DIRECTIONS
+#          FIN
+         BIT ARG1, PLACE
+            IFAT  ARG1
+               SAY YOU.ARE.THERE
+            ELSE
+               SAY DONT.KNOW.THE.WAY
+            FIN
+         ELSE
+            IFEQ CLOSURE, IN.REPOSITORY
+               IFKEY BUNDLE
+                  QUIP NO.PLURAL.PLEASE
+               FIN
+               CALL CHEAT         {Kludge up dummy objects in repository}
+               IFKEY ROD
+                  CALL ROD.SPECIAL.STUFF
+               FIN
+            FIN
+            IFKEY CURTAINS
+               IFAT SOFT
+#                   OR
+#                IFAT CURTAIN.ENTRANCE
+#                   OR
+#                IFAT BARE.CAVERN
+                  APPORT CURTAINS, HERE
+               FIN
+            FIN
+            IFKEY BUNDLE
+               QUIP PARDON?
+            FIN
+            IFKEY LEFT
+               QUIP NEED.A.DIRECTION
+            FIN
+            IFKEY DEBRIS
+               CALL DEBRIS.QUIP
+               QUIT
+            FIN
+#             IFKEY ORION
+#                QUIP ORION.QUIP
+#             FIN
+#             BIT HERE, IN.SEWER
+#                IFKEY WATER
+#                   OR
+#                IFKEY FILL
+#                   QUIP SEWAGE.H20.BAD
+#                FIN
+#             FIN
+            CALL ARG1
+            CALL SHADOW.SHUTUP        {only come here if verb fails to deal}
+            BIT ARG1, OBJECT
+               IFKEY WATER
+                  AND
+               BIT HERE, H20.HERE
+                  OR
+               IFNEAR ARG1
+                  SAY DO.WHAT?, ARG1
+                  BIS STATUS, PLS.CLARIFY   {request clarification}
+               ELSE
+                  SAY I.DONT.SEE, ARG1
+               FIN
+            ELSE
+               CALL BAIL.OUT
+            FIN
+         FIN
+         QUIT
+#
+#=====================================================================
+#
+repeat      # Dummy. Just stops translator grizzling.
+   anyof curious, green, ideas, slept, furiously
+      quip pardon?
+#

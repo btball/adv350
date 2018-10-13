@@ -1,0 +1,233 @@
+*        Define vaious constants.
+*
+*        Bit flags set for the STATUS variable
+*
+FLAGS    VARIABLE
+         MOVED         {set by interpreter whenever we move}
+         QUICKIE       {BRIEF output mode in effect}
+         FASTMODE      {FAST output mode in effect}
+         FULLDISPLAY   {Display full place description}
+         DETAILDISPLAY {Display detailed place/object description}
+         PLS.CLARIFY   {Signals missing object or verb}
+         JUGGLED       {set by interpreter whenever we move an object}
+         TICKED        {The main clock (CLOCK4) has just ticked}
+*
+*        Next, the flag set for places
+*
+FLAGS    PLACE
+         LIT           {Place is self-illuminated}
+         BEEN.HERE     {We've been here at least once}
+         NO.DWARF      {Dwarves can't go here}
+         NO.BACK       {Can't use BACK to go to/from this place}
+         NOT.IN.CAVE   {This place is not in the cave}
+         HINTABLE      {There may be a hint for this place}
+         H20.HERE      {Water is available here}
+         IN.MAZE       {This room is in one of the mazes}
+         ONE.EXIT      {Only one exit out of room}
+         TRANSIT       {Objects thrown here generally wind up elsewhere}
+         SMARTASS      {He has refused spontaneous hint here}
+         DAMP          {the ground is damp here - either from oil or water}
+*
+*        Next, the objects flag set
+*
+FLAGS    OBJECT
+         PORTABLE       {Object can be carried}
+         SEEN           {We've seen the object}
+         VALUED         {It's a treasure - must be left in the building}
+         SCHIZOID       {It's schizoid - in 2 places at once}
+         UNSTABLE       {Unstable objects get kicked from state 0}
+*                       {into state 1 the first time they're picked
+*                       {up - applies only to objects that aren't
+*                       {special-cased anywhere in the code.}
+         MORTAL         {This is a killable entity}
+         OPENABLE       {Object can be opened/unlocked}
+         FEATURE        {Object is a feature of this location}
+         PLURAL         {Object should be referred to in plural}
+         FREEBIE        {Object is effectively weightless}
+         SPECIAL1       {Special control bit 1}
+         SPECIAL2       {Special control bit 2}
+         BIG            {Set for objects}
+         WEARABLE       {Object can be worn - in principle!}
+*
+*        The usage of SPECIAL1 and SPECIAL2 is currently as
+*        follows:
+*
+*        Dwarf       #1 set if the dwarf who just appeared hasn't
+*                    thrown his first knife (which always misses)
+*                    yet.  #2 set if the dwarf is angry (you tried
+*                    to feed him, threw food at him, or doused him
+*                    with water or oil).
+*
+*        Pirate      #1 set if the pirate is chasing you.
+*
+*
+*        Quicksand   #1 set if you have drowned in the quicksand at
+*                    least once.
+*
+*        Troll       #1 set if you have stolen the eggs back from the
+*                    troll.
+*
+*        Shadow      #1 set if player just waved; #2 set on next move
+*                    if shadow about to wave back.
+*
+*        Grate       #1 set if you tried to get out through the grate
+*                    during closure.
+*
+*        Eggs        #1 set if eggs in troll's possession.
+*                    #2 set if eggs gone for good.
+*
+*
+*        Fissure     #1 set if crossed once
+*
+*
+*
+*        All non-big objects  #2 used in dwarves choosing objects to pick up.
+*
+*        During the end-game all special bits are cleared, except for
+*        #1 being set for any objects 'piled up' in NE repository and
+*
+*        Define a flag set for the ADMIN variable
+*
+FLAGS    VARIABLE
+*         DEMO           {Demonstration game}
+         TICKER         {Call TICK label after each move, if set.}
+         CAMEO.TRIED    {We have tried to do a cameo}
+         NOMAGIC        {Magic words are being suppressed}
+         PANICKED       {He panicked during closure}
+         OLORIN         {He's a wizard}
+         RANOUT         {His lamp just died.}
+         QUIPPED        {Dwarf died in a strange manner}
+
+*
+*        Define bit flags for special hint processing. (Variable HINTS).
+*
+FLAGS    VARIABLE
+         SNAKE.PENDING   {The first snake hint delivered}
+         WITT.HELP       {He's just got the hint at Witt's end}
+         HELPED.HIM      {Gave him vanilla "HELP" message once}
+         DEATH.IS.SIMPLE {Advised him how to die}
+         PICKING.UP.RUGS {Told him to ponder}
+         UNROLLING.RUGS  {Told him to drop it}
+*
+*        Define administrative control parameters
+*
+CONSTANT 10,  MIN.TIME    {# of minutes you must wait after SAVE}
+         20,  HINT.COST   {what each hint costs you}
+         5,   HASTE.COST  {cost of restoring game too soon}
+         1999,MAX.GAME    {maximum # of moves in real games}
+*
+*        Define bottle/flask states
+*
+STATE    IN.PENTAGRAM {flask only}
+         SEALED       {flask only}
+         EMPTIED
+         FULL.OF.WATER
+         FULL.OF.OIL
+*
+*        Define lamp states
+*
+STATE    SWITCHED.OFF
+         SWITCHED.ON
+*
+*        Define door states
+*
+STATE    RUSTY
+         OILED
+*
+*        Define grate/chain/safe states.
+*
+STATE    LOCKED
+         UNLOCKED
+         LOCKED.EMPTY
+*
+*        Define dragon states
+*
+STATE    ON.RUG
+         DEAD.BODY
+         ROTTING.CARCASS
+*
+*
+*        Define chasm states
+*
+STATE    BRIDGED
+         BRIDGE.WRECKED
+         BRIDGE.BURNED
+*
+*        Define troll states
+*
+STATE    WANTS.TREASURE
+         BOUGHT.OFF
+         WILL.BE.BACK
+         SCARED.OFF
+         GONE.FOR.GOOD
+*
+*        Define battery states. (Note, state 2 MUST be dummy).
+*
+STATE    1,  FRESH
+         3,  WORNOUT
+*
+*        Define bird states.
+*
+STATE    FREED
+         CAGED
+*
+*        Define bear states.
+*
+STATE    CHAINED.FEROCIOUS
+         CHAINED.GENTLE
+         UNCHAINED
+*
+*        Define axe states.
+*
+STATE    AN.ZICH
+         BY.BEAR
+*
+*        Define beanstalk states.
+*
+STATE    STUNTED
+         GROWN
+         GIGANTIC
+*
+*        Define rug states.
+*
+STATE    UNROLLED
+         ROLLED.UP
+*
+*        Define threshold for wearable objects. Note that this is set to
+*        take into account "unstable" objects. Hence on removing stable
+*        objects will give them state 1, which they mostly don't have.
+*        Not that it matters - the highest existing description will
+*        be printed in such a case.
+*
+STATE    1,  NOT.WORN
+             WORN
+*
+*        Define the states for STEPS at MISTS and PIT.
+*
+STATE    STEPS.PRESENT
+         STEPS.GONE
+*
+*        Define status values returned by IS.IT.DARK?
+*
+CONSTANT IT.IS.NOT.DARK
+         IT.IS.DARK
+*
+*        Define values passed by interpreter for "unrecognized word"
+*
+* CONSTANT 9998, AMBIGWORD
+*                BADWORD
+*
+*        The phases of cave closure are as follows:
+*
+CONSTANT STILL.OPEN          {Cave open and operating normally}
+         CLOSING.SOON        {All treasures are in well-house}
+         EXITS.BARRED        {Cave closing soon}
+         IN.REPOSITORY       {In repository}
+         VICTORY!            {Wins game!}
+*
+CONSTANT 16, CLOSURE.CREDIT       {Points per stage of closure}
+*
+*        One special bit flag for the CLOSURE variable
+*
+FLAGS    VARIABLE
+         CONFUSION      {has got confused once in closure stage 5}

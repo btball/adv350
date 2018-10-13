@@ -1,0 +1,54 @@
+This file will contain the status of the back-port
+
+Current status:
+
+Initial - the files are the 660 point version A-code
+Clean compile
+Initial "smoke test" - console mode is pretty broken !
+
+
+Files at least partially cleaned up
+
+actions.acd
+at.acd
+defs.acd
+main.acd
+objects.acd
+places.acd
+procs.acd
+text.acd
+vars.acd
+verbs.acd
+
+Next steps
+
+Compile and clean-up --- in process
+
+Will need to fix scoring
+
+Probably hints need to be fixed
+
+Endgame may need to be fixed
+
+Be sure to test routines where a flask used to be possible:  drink, oil, pour ...
+
+
+Close.the.gave routing needs to be inspected / tested
+
+in 350 where do the magazines have to be dropped?
+
+
+Travel table will have to be examined
+
+---- Bugs found not yet fixed
+
+extraneous "0" and no lf after killing a dwarf
+rug has to be rolled - that wasn't in the original 350, so may want to fix that 
+when the bottle is picked up in the well-house, in the original game it came with water, 
+now I have to fill it ...
+
+Need to test save, restore, memoize ....
+
+
+
+
